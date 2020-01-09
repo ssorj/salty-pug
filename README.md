@@ -30,6 +30,7 @@
    anywhere.
 
    //store/api/find-item
+
    //factory/api/find-item
 
 2. The local store uses //factory/api/make-item to get one
