@@ -19,6 +19,7 @@ who embrace a nautical and criminal lifestyle.
  - Factories - This is where we make the adventureware
  - Delivery trucks - This is how we get the adventureware from our
    factories to our stores
+ - Website
 
 Stores, factories, and delivery trucks each have an inventory database
 and a location.

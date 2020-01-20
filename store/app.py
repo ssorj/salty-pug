@@ -33,12 +33,19 @@ def error(e):
     app.logger.error(e)
     return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
 
-@app.route("/api/stores/<req_store_id>/find")
-def find(req_store_id):
-    if req_store_id in ("all", store_id):
-        return Response(f"Hello!", mimetype="text/plain")
+@app.route("/api/find-item")
+def find_item():
+    pass
+    # return Response(f"Hello!", mimetype="text/plain")
+    # return Response(f"Not found!", status=404, mimetype="text/plain")
 
-    return Response(f"Not found!", status=404, mimetype="text/plain")
+@app.route("/api/hold-item")
+def hold_item():
+    pass
+
+@app.route("/api/stock-item")
+def stock_item():
+    pass
 
 if __name__ == "__main__":
     app.run(host=host, port=port)

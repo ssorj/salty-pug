@@ -10,7 +10,7 @@
 2. The local store uses //store-32/api/find-item to look for the item
    at a nearby store.
 
-3. The local store uses //store/api/find-item to look for the item in
+3. The local store uses //store-all/api/find-item to look for the item in
    all the stores and get the one that's closest.
 
 4. The item is found at store-41.  The local store uses
@@ -29,48 +29,58 @@
 1. Look for the pegleg that Roscoe wants.  It's not in inventory
    anywhere.
 
-   //store/api/find-item
+   //store-all/api/find-item
+   //factory-all/api/find-item
 
-   //factory/api/find-item
-
-2. The local store uses //factory/api/make-item to get one
+2. The local store uses //factory-any/api/make-item to get one
    manufactured.  The factory with the most spare capacity accepts the
-   request and begins making it.  The factory returns a tracking ID to
-   the local store, which it gives to Roscoe.  Roscoe can use the ID
-   to check the state of his order on the website.
+   request and begins making it.
 
-   The factory uses //website/api/update-item-status to publish the
-   item's degree of completion.
+   (Use cost to model physical distance.)
+
+   <!-- The factory returns a tracking ID to -->
+   <!-- the local store, which it gives to Roscoe.  Roscoe can use the ID -->
+   <!-- to check the state of his order on the website. -->
+
+   <!-- The factory uses //website-all/api/update-item-status (in progress, -->
+   <!-- done) to publish the item's degree of completion. -->
 
 ### Variants
 
 - In step 1, the item is inventory at a factory, and it needs to get
-shipped to a store.  I think we'll want delivery trucks for this.
+  shipped to a store.  I think we'll want delivery trucks for this.
 
 - In step 2, some website instances are on the west coast, and some on
-  the east.  Because //website/api/update-item-status is multicast,
+  the east.  Because //website-all/api/update-item-status is multicast,
   the connected websites still function properly.
 
 ## Endpoints
 
     In general
-      //<entity-type>/api/...              <- A class of things
-      //<entity-type>-<entity-id>/api/...  <- A particular thing
+      //<entity-type>-any/api/             <- A dynamically selected thing (anycast balanced treatment)
+      //<entity-type>-all/api/             <- All the things (multicast)
+      //<entity-type>-<entity-id>/api/     <- A particular thing
+        - Once for each store
+        - Note that this single service would still multiple backing processes
 
     Store
-      Handles //store/api/find-item
+      Handles //store-all/api/find-item
+      Handles //store-any/api/find-item
+        Related: Handles //store-<store-id>/find-item-response
       Handles //store-<store-id>/api/find-item
       Handles //store-<store-id>/api/hold-item
-      Calls //store/api/find-item
+      Handles //store-<store-id>/api/stock-item
+      Calls //store-all/api/find-item
+      Calls //store-any/api/find-item
       Calls //store-<store-id>/api/find-item
-      Calls //factory/api/make-item
+      Calls //factory-any/api/make-item
 
     Factory
-      Handles //factory/api/find-item
-      Handles //factory/api/make-item
+      Handles //factory-all/api/find-item
+      Handles //factory-any/api/make-item
       Handles //factory-<factory-id>/api/find-item
       Handles //factory-<factory-id>/api/make-item
-      Calls //website/api/update-item-status
+      Calls //website-all/api/update-item-status
 
     Website
       Handles //website/api/update-item-status
