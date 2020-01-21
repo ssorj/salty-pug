@@ -46,7 +46,7 @@ class InventoryItem:
 
         with lock:
             items.append(self)
-            items_by_kind[self.kind] = self
+            items_by_kind[self.kind].append(self)
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.kind},{self.size},{self.color})"
@@ -65,19 +65,16 @@ def find_item():
     results = list()
 
     with lock:
-        print(items)
-
-        for item in items:
-            if item.kind != kind:
-                continue
-
-            if size is not None and item.size != size:
-                continue
-
-            if color is not None and item.color != color:
-                continue
-
-            results.append(item)
+        print(55, items, items_by_kind[kind])
+        for item in items_by_kind[kind]:
+            print(66)
+            print(item)
+            print(111, size, item.size)
+            if size is None or item.size == size:
+                print(11)
+                if color is None or item.color == color:
+                    print(22)
+                    results.append(item)
 
     return jsonify({"items": results})
     # return Response(f"Not found!", status=404, mimetype="text/plain")
@@ -89,6 +86,9 @@ def stock_item():
     color = request.form["color"]
 
     InventoryItem(kind, size, color)
+
+    print(33, items)
+    print(44, items_by_kind)
 
     return "Item stocked"
 
