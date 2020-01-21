@@ -8,14 +8,15 @@ ENV["STORE_SERVICE_HOST"] = "localhost"
 ENV["STORE_SERVICE_PORT"] = store_port = str(get_random_port())
 ENV["FACTORY_SERVICE_PORT"] = factory_port = str(get_random_port())
 
-store_url = f"http://localhost:{store_port}/api/stores/all/find"
-factory_url = f"http://localhost:{factory_port}/api/factories/all/find"
+store_base_url = f"http://localhost:{store_port}"
+factory_base_url = f"http://localhost:{factory_port}"
 
 with start_process("python3 store/app.py") as store:
     with start_process("python3 factory/app.py") as factory:
         sleep(0.5)
 
-        print(requests.get(store_url).text)
-        print(requests.get(factory_url).text)
+        print(requests.post(store_base_url + "/api/stock-item", data={"kind": "cutlass", "size": "large", "color": "red"}).text)
+        print(requests.get(store_base_url + "/api/find-item?kind=cutlass;size=large").text)
+        # print(requests.get(factory_url).text)
 
         print("SUCCESS")

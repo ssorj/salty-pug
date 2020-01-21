@@ -18,8 +18,10 @@
 #
 
 import os
+import requests
 
-from flask import Flask, Response
+from collections import defaultdict
+from flask import Flask, Response, request, jsonify
 from threading import Lock
 
 app = Flask(__name__)
@@ -28,6 +30,27 @@ store_id = os.environ.get("STORE_SERVICE_STORE_ID")
 host = os.environ.get("STORE_SERVICE_HOST", "localhost")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
+lock = Lock()
+items = list()
+items_by_kind = defaultdict(list)
+
+class InventoryItem:
+    def __init__(self, kind, size, color):
+        assert kind in ("cutlass", "parrot", "pegleg")
+        assert size in ("small", "medium", "large")
+        assert color in ("red", "green", "blue")
+
+        self.kind = kind
+        self.size = size
+        self.color = color
+
+        with lock:
+            items.append(self)
+            items_by_kind[self.kind] = self
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.kind},{self.size},{self.color})"
+
 @app.errorhandler(Exception)
 def error(e):
     app.logger.error(e)
@@ -35,17 +58,42 @@ def error(e):
 
 @app.route("/api/find-item")
 def find_item():
-    pass
-    # return Response(f"Hello!", mimetype="text/plain")
+    kind = request.args["kind"]
+    size = request.args.get("size")
+    color = request.args.get("color")
+
+    results = list()
+
+    with lock:
+        print(items)
+
+        for item in items:
+            if item.kind != kind:
+                continue
+
+            if size is not None and item.size != size:
+                continue
+
+            if color is not None and item.color != color:
+                continue
+
+            results.append(item)
+
+    return jsonify({"items": results})
     # return Response(f"Not found!", status=404, mimetype="text/plain")
 
-@app.route("/api/hold-item")
-def hold_item():
-    pass
-
-@app.route("/api/stock-item")
+@app.route("/api/stock-item", methods=["POST"])
 def stock_item():
-    pass
+    kind = request.form["kind"]
+    size = request.form["size"]
+    color = request.form["color"]
+
+    InventoryItem(kind, size, color)
+
+    return "Item stocked"
 
 if __name__ == "__main__":
     app.run(host=host, port=port)
+
+# request.form["key"]
+# request.args["key"]
