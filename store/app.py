@@ -31,22 +31,35 @@ host = os.environ.get("STORE_SERVICE_HOST", "localhost")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
 lock = Lock()
+item_id_sequence = 0
 items = list()
-items_by_kind = defaultdict(list)
 
 class InventoryItem:
-    def __init__(self, kind, size, color):
+    def __init__(self, kind, size, color, id=None):
+        global item_id_sequence
+
         assert kind in ("cutlass", "parrot", "pegleg")
         assert size in ("small", "medium", "large")
         assert color in ("red", "green", "blue")
 
+        self.id = id
         self.kind = kind
         self.size = size
         self.color = color
 
         with lock:
+            if self.id is None:
+                self.id = item_id_sequence = item_id_sequence + 1
+
             items.append(self)
-            items_by_kind[self.kind].append(self)
+
+    def data(self):
+        return {
+            "id": self.id,
+            "kind": self.kind,
+            "size": self.size,
+            "color": self.color,
+        }
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.kind},{self.size},{self.color})"
@@ -65,19 +78,13 @@ def find_item():
     results = list()
 
     with lock:
-        print(55, items, items_by_kind[kind])
-        for item in items_by_kind[kind]:
-            print(66)
-            print(item)
-            print(111, size, item.size)
-            if size is None or item.size == size:
-                print(11)
-                if color is None or item.color == color:
-                    print(22)
-                    results.append(item)
+        for item in items:
+            if item.kind == kind:
+                if size is None or item.size == size:
+                    if color is None or item.color == color:
+                        results.append(item.data())
 
     return jsonify({"items": results})
-    # return Response(f"Not found!", status=404, mimetype="text/plain")
 
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
@@ -86,9 +93,6 @@ def stock_item():
     color = request.form["color"]
 
     InventoryItem(kind, size, color)
-
-    print(33, items)
-    print(44, items_by_kind)
 
     return "Item stocked"
 
