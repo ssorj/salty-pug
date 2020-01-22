@@ -19,6 +19,7 @@
 
 import os
 import requests
+import uuid
 
 from collections import defaultdict
 from flask import Flask, Response, request, jsonify
@@ -31,18 +32,15 @@ host = os.environ.get("STORE_SERVICE_HOST", "localhost")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
 lock = Lock()
-item_id_sequence = 0
 items = list()
 
 class InventoryItem:
     def __init__(self, kind, size, color, id=None):
-        global item_id_sequence
-
         assert kind in ("cutlass", "parrot", "pegleg")
         assert size in ("small", "medium", "large")
         assert color in ("red", "green", "blue")
 
-        self.id = id
+        self.id = str(uuid.uuid4())
         self.kind = kind
         self.size = size
         self.color = color
@@ -85,6 +83,10 @@ def find_item():
                         results.append(item.data())
 
     return jsonify({"items": results})
+
+@app.route("/api/find-item-response", methods=["POST"])
+def find_item_response():
+    pass
 
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
