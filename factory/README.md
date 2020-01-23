@@ -5,7 +5,7 @@
 An "item" in JSON format:
 
     {
-        "id": "<uuid>",     // Not always present
+        "id": "<item-id>",  // A UUID. Not always present.
         "kind": "<kind>",   // "cutlass", "pegleg", or "parrot"
         "color": "<color>", // "red", "green", or "blue"
         "size": "<size>"    // "small", "medium", or "large"
@@ -23,6 +23,7 @@ Addresses:
 Response body:
 
       {
+          "error": null,
           "items": [
               { /* Item fields */ },
               { /* Item fields */ },
@@ -53,12 +54,16 @@ Request body:
 Response body:
 
     {
+        "error": null,
         "factory_id": "<factory-id>",
         "item_id": "<uuid>"
     }
 
 Responses are delayed (and thus acks are slowed) if a lot of things
 are currently being made.
+
+When the process of making the item is complete, the factory ships the
+item to the store in the request.
 
 ## Checking the status of an item
 
@@ -71,7 +76,8 @@ Addresses:
 Response body:
 
     {
-        "item_status": "<description>"
+        "error": null,
+        "status": "<description>"
     }
 
 ## Shipping an item to a store
@@ -91,4 +97,6 @@ Request body:
 
 Response body:
 
-    XXX
+    {
+        "error": null
+    }
