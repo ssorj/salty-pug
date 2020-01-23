@@ -34,7 +34,7 @@ port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 lock = Lock()
 items = list()
 
-class InventoryItem:
+class ProductItem:
     def __init__(self, kind, size, color, id=None):
         assert kind in ("cutlass", "parrot", "pegleg")
         assert size in ("small", "medium", "large")
@@ -46,9 +46,6 @@ class InventoryItem:
         self.color = color
 
         with lock:
-            if self.id is None:
-                self.id = item_id_sequence = item_id_sequence + 1
-
             items.append(self)
 
     def data(self):
@@ -82,24 +79,20 @@ def find_item():
                     if color is None or item.color == color:
                         results.append(item.data())
 
-    return jsonify({"items": results})
-
-@app.route("/api/find-item-response", methods=["POST"])
-def find_item_response():
-    pass
+    return jsonify({
+        "error": None,
+        "items": results,
+    })
 
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
-    kind = request.form["kind"]
-    size = request.form["size"]
-    color = request.form["color"]
+    data = request.json
 
-    InventoryItem(kind, size, color)
+    ProductItem(data["kind"], data.get("size"), data.get("color"))
 
-    return "Item stocked"
+    return jsonify({
+        "error": None,
+    })
 
 if __name__ == "__main__":
     app.run(host=host, port=port)
-
-# request.form["key"]
-# request.args["key"]

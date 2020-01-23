@@ -15,9 +15,9 @@ with start_process("python3 store/app.py") as store:
     with start_process("python3 factory/app.py") as factory:
         sleep(0.5)
 
-        print(requests.post(store_base_url + "/api/stock-item", data={"kind": "cutlass", "size": "large", "color": "red"}).text)
-        print(requests.post(store_base_url + "/api/stock-item", data={"kind": "cutlass", "size": "large", "color": "green"}).text)
-        print(requests.post(store_base_url + "/api/stock-item", data={"kind": "cutlass", "size": "small", "color": "blue"}).text)
+        print(requests.post(store_base_url + "/api/stock-item", json={"kind": "cutlass", "size": "large", "color": "red"}).text)
+        print(requests.post(store_base_url + "/api/stock-item", json={"kind": "cutlass", "size": "large", "color": "green"}).text)
+        print(requests.post(store_base_url + "/api/stock-item", json={"kind": "cutlass", "size": "small", "color": "blue"}).text)
 
         print(requests.get(store_base_url + "/api/find-item?kind=cutlass&size=large").text)
         print(requests.get(store_base_url + "/api/find-item?kind=cutlass&size=small").text)

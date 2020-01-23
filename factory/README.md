@@ -62,8 +62,9 @@ Response body:
 Responses are delayed (and thus acks are slowed) if a lot of things
 are currently being made.
 
-When the process of making the item is complete, the factory ships the
-item to the store in the request.
+When the process of making the item is complete, the factory calls
+`//store-<store-id>/api/stock-item` to place it in the store's
+inventory.
 
 ## Checking the status of an item
 
