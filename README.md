@@ -80,7 +80,3 @@
       Handles //factory-any/api/make-item
       Handles //factory-<factory-id>/api/find-item
       Handles //factory-<factory-id>/api/make-item
-      Calls //website-all/api/update-item-status
-
-    Website
-      Handles //website/api/update-item-status
