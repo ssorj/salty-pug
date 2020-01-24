@@ -42,9 +42,6 @@
    <!-- the local store, which it gives to Roscoe.  Roscoe can use the ID -->
    <!-- to check the state of his order on the website. -->
 
-   <!-- The factory uses //website-all/api/update-item-status (in progress, -->
-   <!-- done) to publish the item's degree of completion. -->
-
 ### Variants
 
 - In step 1, the item is inventory at a factory, and it needs to get
@@ -60,8 +57,8 @@
       //<entity-type>-any/api/             <- A dynamically selected thing (anycast balanced treatment)
       //<entity-type>-all/api/             <- All the things (multicast)
       //<entity-type>-<entity-id>/api/     <- A particular thing
-        - Once for each store
-        - Note that this single service would still multiple backing processes
+        - One for each store
+        - Note that this single service would still have multiple backing processes
 
     Store
       Handles //store-all/api/find-item
@@ -71,7 +68,6 @@
       Handles //store-<store-id>/api/hold-item
       Handles //store-<store-id>/api/stock-item
       Calls //store-all/api/find-item
-      Calls //store-any/api/find-item
       Calls //store-<store-id>/api/find-item
       Calls //factory-any/api/make-item
 
