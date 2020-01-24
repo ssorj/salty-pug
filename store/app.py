@@ -28,7 +28,7 @@ from threading import Lock
 app = Flask(__name__)
 
 store_id = os.environ.get("STORE_SERVICE_STORE_ID")
-host = os.environ.get("STORE_SERVICE_HOST", "localhost")
+host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
 lock = Lock()

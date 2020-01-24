@@ -1,4 +1,4 @@
-IMAGE := quay.io/skupper/hello-world-backend
+IMAGE := quay.io/skupper/salty-pug-factory
 
 .PHONY: build
 build:

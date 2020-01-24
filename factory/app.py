@@ -18,23 +18,71 @@
 #
 
 import os
+import requests
+import uuid
 
-from flask import Flask, Response
+from collections import defaultdict
+from flask import Flask, Response, request, jsonify
 from threading import Lock
 
 app = Flask(__name__)
 
+factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
+
+lock = Lock()
+items = list()
+
+class ProductItem:
+    def __init__(self, kind, size, color, id=None):
+        assert kind in ("cutlass", "parrot", "pegleg")
+        assert size in ("small", "medium", "large")
+        assert color in ("red", "green", "blue")
+
+        self.id = str(uuid.uuid4())
+        self.kind = kind
+        self.size = size
+        self.color = color
+
+        with lock:
+            items.append(self)
+
+    def data(self):
+        return {
+            "id": self.id,
+            "kind": self.kind,
+            "size": self.size,
+            "color": self.color,
+        }
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.kind},{self.size},{self.color})"
 
 @app.errorhandler(Exception)
 def error(e):
     app.logger.error(e)
     return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
 
-@app.route("/api/factories/all/find")
-def hello():
-    return Response(f"Hello!", mimetype="text/plain")
+@app.route("/api/find-item")
+def find_item():
+    kind = request.args["kind"]
+    size = request.args.get("size")
+    color = request.args.get("color")
+
+    results = list()
+
+    with lock:
+        for item in items:
+            if item.kind == kind:
+                if size is None or item.size == size:
+                    if color is None or item.color == color:
+                        results.append(item.data())
+
+    return jsonify({
+        "error": None,
+        "items": results,
+    })
 
 if __name__ == "__main__":
     app.run(host=host, port=port)

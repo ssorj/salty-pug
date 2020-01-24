@@ -1,15 +1,4 @@
-# Factory
-
-## Item data
-
-An "item" in JSON format:
-
-    {
-        "id": "<item-id>",  // A UUID. Not always present.
-        "kind": "<kind>",   // "cutlass", "pegleg", or "parrot"
-        "color": "<color>", // "red", "green", or "blue"
-        "size": "<size>"    // "small", "medium", or "large"
-    }
+# Salty Pug factory
 
 ## Finding items in factory inventory
 
