@@ -1,8 +1,12 @@
 # Salty Pug
 
-## Endpoints
+## Services
 
-### General
+ - [Store](store/)
+ - [Factory](factory/)
+ - [Truck](factory/)
+
+## Endpoints
 
       //<entity-type>-any/api/             <- A dynamically selected thing (anycast balanced treatment)
       //<entity-type>-all/api/             <- All the things (multicast)
