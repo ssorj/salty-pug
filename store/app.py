@@ -21,7 +21,6 @@ import os
 import requests
 import uuid
 
-from collections import defaultdict
 from flask import Flask, Response, request, jsonify
 from threading import Lock
 
@@ -32,7 +31,7 @@ host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
 lock = Lock()
-items = list()
+items_by_id = dict()
 
 class ProductItem:
     def __init__(self, kind, size, color, id=None):
@@ -46,7 +45,7 @@ class ProductItem:
         self.color = color
 
         with lock:
-            items.append(self)
+            items_by_id[self.id] = self
 
     def data(self):
         return {
@@ -57,15 +56,15 @@ class ProductItem:
         }
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.kind},{self.size},{self.color})"
+        return f"{self.__class__.__name__}({self.id},{self.kind},{self.size},{self.color})"
 
 @app.errorhandler(Exception)
 def error(e):
     app.logger.error(e)
     return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
 
-@app.route("/api/find-item")
-def find_item():
+@app.route("/api/find-items")
+def find_items():
     kind = request.args["kind"]
     size = request.args.get("size")
     color = request.args.get("color")
@@ -73,7 +72,7 @@ def find_item():
     results = list()
 
     with lock:
-        for item in items:
+        for item in items_by_id.values():
             if item.kind == kind:
                 if size is None or item.size == size:
                     if color is None or item.color == color:
@@ -86,9 +85,8 @@ def find_item():
 
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
-    data = request.json
-
-    ProductItem(data["kind"], data.get("size"), data.get("color"))
+    item_data = request.json["item"]
+    item = ProductItem(item_data["kind"], item_data["size"], item_data["color"], id=item_data["id"])
 
     return jsonify({
         "error": None,

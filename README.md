@@ -16,21 +16,21 @@
 
 ### Store endpoints
 
-      Handles //store-all/api/find-item
-      Handles //store-any/api/find-item
-      Handles //store-<store-id>/api/find-item
+      Handles //store-all/api/find-items
+      Handles //store-any/api/find-items
+      Handles //store-<store-id>/api/find-items
       Handles //store-<store-id>/api/hold-item
       Handles //store-<store-id>/api/stock-item
-      Calls //store-all/api/find-item
-      Calls //store-<store-id>/api/find-item
-      Calls //factory-all/api/find-item
+      Calls //store-all/api/find-items
+      Calls //store-<store-id>/api/find-items
+      Calls //factory-all/api/find-items
       Calls //factory-any/api/make-item
 
 ### Factory endpoints
 
-      Handles //factory-all/api/find-item
+      Handles //factory-all/api/find-items
       Handles //factory-any/api/make-item
-      Handles //factory-<factory-id>/api/find-item
+      Handles //factory-<factory-id>/api/find-items
       Handles //factory-<factory-id>/api/make-item
       Calls //store-<store-id>/api/stock-item
 

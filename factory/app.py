@@ -21,7 +21,6 @@ import os
 import requests
 import uuid
 
-from collections import defaultdict
 from flask import Flask, Response, request, jsonify
 from threading import Lock
 
@@ -31,8 +30,10 @@ factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
 
+store_base_url = f"http://{os.environ['STORE_SERVICE_HOST']}:{os.environ['STORE_SERVICE_PORT']}"
+
 lock = Lock()
-items = list()
+items_by_id = dict()
 
 class ProductItem:
     def __init__(self, kind, size, color, id=None):
@@ -46,7 +47,7 @@ class ProductItem:
         self.color = color
 
         with lock:
-            items.append(self)
+            items_by_id[self.id] = self
 
     def data(self):
         return {
@@ -57,15 +58,15 @@ class ProductItem:
         }
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.kind},{self.size},{self.color})"
+        return f"{self.__class__.__name__}({self.id},{self.kind},{self.size},{self.color})"
 
 @app.errorhandler(Exception)
 def error(e):
     app.logger.error(e)
     return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
 
-@app.route("/api/find-item")
-def find_item():
+@app.route("/api/find-items")
+def find_items():
     kind = request.args["kind"]
     size = request.args.get("size")
     color = request.args.get("color")
@@ -73,7 +74,7 @@ def find_item():
     results = list()
 
     with lock:
-        for item in items:
+        for item in items_by_id.values():
             if item.kind == kind:
                 if size is None or item.size == size:
                     if color is None or item.color == color:
@@ -82,6 +83,36 @@ def find_item():
     return jsonify({
         "error": None,
         "items": results,
+    })
+
+@app.route("/api/make-item", methods=["POST"])
+def make_item():
+    item_data = request.json["item"]
+    item = ProductItem(item_data["kind"], item_data["size"], item_data["color"])
+
+    return jsonify({
+        "error": None,
+        "factory_id": factory_id,
+        "item_id": item.id,
+    })
+
+@app.route("/api/ship-item", methods=["POST"])
+def ship_item():
+    data = request.json
+    item = items_by_id[data["item_id"]]
+    store_id = data["store_id"]
+
+    data = {
+        "item": item.data(),
+    }
+
+    requests.post(f"{store_base_url}/api/stock-item", json=data)
+
+    with lock:
+        del items_by_id[item.id]
+
+    return jsonify({
+        "error": None,
     })
 
 if __name__ == "__main__":

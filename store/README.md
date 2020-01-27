@@ -2,7 +2,7 @@
 
 ## Finding items in store inventory
 
-    GET /api/find-item?kind=<kind>&color=<color>&size=<size>
+    GET /api/find-items?kind=<kind>&color=<color>&size=<size>
 
 Addresses:
 
@@ -20,7 +20,7 @@ Response body:
           ]
       }
 
-## Stocking items
+## Stocking an item
 
     POST /api/stock-item
 
@@ -32,6 +32,8 @@ Request body:
 
     {
         "item": {
+            // All fields are required
+            "id" "<item-id>",
             "kind": "<kind>",
             "color": "<color>",
             "size": "<size>"

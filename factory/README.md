@@ -2,7 +2,7 @@
 
 ## Finding items in factory inventory
 
-    GET /api/find-item?kind=<kind>&color=<color>&size=<size>
+    GET /api/find-items?kind=<kind>&color=<color>&size=<size>
 
 Addresses:
 
@@ -20,7 +20,7 @@ Response body:
           ]
       }
 
-## Making new items
+## Making a new item
 
     POST /api/make-item
 
@@ -32,7 +32,6 @@ Addresses:
 Request body:
 
     {
-        "store_id": "<store-id>",
         "item": {
             "kind": "<kind>",
             "color": "<color>",
@@ -51,9 +50,9 @@ Response body:
 Responses are delayed (and thus acks are slowed) if a lot of things
 are currently being made.
 
-When the process of making the item is complete, the factory calls
-`//store-<store-id>/api/stock-item` to place it in the store's
-inventory.
+When the process of making the item is complete, the factory stores it
+in its inventory.  You can then use `/api/ship-item` to send it to a
+store.
 
 ## Checking the status of an item
 

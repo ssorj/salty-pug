@@ -2,15 +2,15 @@
 
 ## Scenario 1
 
-1. The local store (store-24) uses //store-24/api/find-item to look
+1. The local store (store-24) uses //store-24/api/find-items to look
    for the item in its own inventory.
 
    [Interesting potential for a "local store" alias here]
 
-2. The local store uses //store-32/api/find-item to look for the item
+2. The local store uses //store-32/api/find-items to look for the item
    at a nearby store.
 
-3. The local store uses //store-all/api/find-item to look for the item in
+3. The local store uses //store-all/api/find-items to look for the item in
    all the stores and get the one that's closest.
 
 4. The item is found at store-41.  The local store uses
@@ -29,8 +29,8 @@
 1. Look for the pegleg that Roscoe wants.  It's not in inventory
    anywhere.
 
-   //store-all/api/find-item
-   //factory-all/api/find-item
+   //store-all/api/find-items
+   //factory-all/api/find-items
 
 2. The local store uses //factory-any/api/make-item to get one
    manufactured.  The factory with the most spare capacity accepts the

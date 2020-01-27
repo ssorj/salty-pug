@@ -4,23 +4,33 @@ import requests
 
 from plano import *
 
-ENV["STORE_SERVICE_HOST"] = "localhost"
+ENV["STORE_SERVICE_STORE_ID"] = store_id = "1"
+ENV["STORE_SERVICE_HOST"] = store_host = "localhost"
 ENV["STORE_SERVICE_PORT"] = store_port = str(get_random_port())
+ENV["FACTORY_SERVICE_FACTORY_ID"] = factory_id = "1"
+ENV["FACTORY_SERVICE_HOST"] = factory_host = "localhost"
 ENV["FACTORY_SERVICE_PORT"] = factory_port = str(get_random_port())
 
-store_base_url = f"http://localhost:{store_port}"
-factory_base_url = f"http://localhost:{factory_port}"
+store_base_url = f"http://{store_host}:{store_port}"
+factory_base_url = f"http://{factory_host}:{factory_port}"
 
 with start_process("python3 store/app.py") as store:
     with start_process("python3 factory/app.py") as factory:
         sleep(0.5)
 
-        print(requests.post(store_base_url + "/api/stock-item", json={"kind": "cutlass", "size": "large", "color": "red"}).text)
-        print(requests.post(store_base_url + "/api/stock-item", json={"kind": "cutlass", "size": "large", "color": "green"}).text)
-        print(requests.post(store_base_url + "/api/stock-item", json={"kind": "cutlass", "size": "small", "color": "blue"}).text)
+        request = {"item": {"kind": "cutlass", "size": "large", "color": "red"}}
+        response = requests.post(f"{factory_base_url}/api/make-item", json=request).json()
+        # check_error(response)
 
-        print(requests.get(store_base_url + "/api/find-item?kind=cutlass&size=large").text)
-        print(requests.get(store_base_url + "/api/find-item?kind=cutlass&size=small").text)
-        print(requests.get(store_base_url + "/api/find-item?kind=pegleg&color=blue").text)
+        request = {"item_id": response["item_id"], "store_id": store_id}
+        response = requests.post(f"{factory_base_url}/api/ship-item", json=request).json()
+        # check_error(response)
+
+        # print(requests.post(f"{factory_base_url}/api/make-item", json={"item": {"kind": "cutlass", "size": "large", "color": "green"}}).text)
+        # print(requests.post(f"{factory_base_url}/api/make-item", json={"item": {"kind": "cutlass", "size": "small", "color": "blue"}}).text)
+
+        print(requests.get(f"{store_base_url}/api/find-items?kind=cutlass&size=large").text)
+        print(requests.get(f"{store_base_url}/api/find-items?kind=cutlass&size=small").text)
+        print(requests.get(f"{store_base_url}/api/find-items?kind=pegleg&color=blue").text)
 
         print("SUCCESS")
