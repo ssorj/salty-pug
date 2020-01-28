@@ -20,6 +20,26 @@ Response body:
           ]
       }
 
+## Holding an item
+
+    POST /api/hold-item
+
+Addresses:
+
+    store-<store-id>
+
+Request body:
+
+    {
+        "item_id": "<item-id>"
+    }
+
+Response body:
+
+    {
+        "error": null,
+    }
+
 ## Stocking an item
 
     POST /api/stock-item

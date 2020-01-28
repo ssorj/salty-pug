@@ -50,9 +50,9 @@ Response body:
 Responses are delayed (and thus acks are slowed) if a lot of things
 are currently being made.
 
-When the process of making the item is complete, the factory stores it
-in its inventory.  You can then use `/api/ship-item` to send it to a
-store.
+When the process of making the item is complete, the factory updates
+its status to "made".  You can then use `/api/ship-item` to send it to
+a store.
 
 ## Checking the status of an item
 
@@ -66,7 +66,7 @@ Response body:
 
     {
         "error": null,
-        "status": "<description>"
+        "status": "<description>" // "making" or "made"
     }
 
 ## Shipping an item to a store
