@@ -18,20 +18,26 @@ def check_error(response):
     if response["error"] is not None:
         raise Exception(response["error"])
 
+def make_and_ship_item(kind, size, color):
+    request = {"item": {"kind": kind, "size": size, "color": color}}
+    response = requests.post(f"{factory_base_url}/api/make-item", json=request).json()
+    check_error(response)
+
+    item_id = response["item_id"]
+
+    request = {"item_id": item_id, "store_id": store_id}
+    response = requests.post(f"{factory_base_url}/api/ship-item", json=request).json()
+    check_error(response)
+
+    return item_id
+
 with start_process("python3 store/app.py") as store:
     with start_process("python3 factory/app.py") as factory:
         sleep(0.5)
 
-        request = {"item": {"kind": "cutlass", "size": "large", "color": "red"}}
-        response = requests.post(f"{factory_base_url}/api/make-item", json=request).json()
-        check_error(response)
-
-        request = {"item_id": response["item_id"], "store_id": store_id}
-        response = requests.post(f"{factory_base_url}/api/ship-item", json=request).json()
-        check_error(response)
-
-        # print(requests.post(f"{factory_base_url}/api/make-item", json={"item": {"kind": "cutlass", "size": "large", "color": "green"}}).text)
-        # print(requests.post(f"{factory_base_url}/api/make-item", json={"item": {"kind": "cutlass", "size": "small", "color": "blue"}}).text)
+        make_and_ship_item("cutlass", "large", "red")
+        make_and_ship_item("cutlass", "large", "green")
+        make_and_ship_item("cutlass", "small", "blue")
 
         print(requests.get(f"{store_base_url}/api/find-items?kind=cutlass&size=large").text)
         print(requests.get(f"{store_base_url}/api/find-items?kind=cutlass&size=small").text)
