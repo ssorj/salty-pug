@@ -45,9 +45,13 @@ class ProductItem:
         self.kind = kind
         self.size = size
         self.color = color
+        self.status = "making"
 
         with lock:
             items_by_id[self.id] = self
+
+    def finish_making(self):
+        self.status = "made"
 
     def data(self):
         return {
@@ -58,7 +62,7 @@ class ProductItem:
         }
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.kind},{self.size},{self.color})"
+        return f"{self.__class__.__name__}({self.id},{self.kind},{self.size},{self.color},{self.status})"
 
 @app.errorhandler(Exception)
 def error(e):
@@ -90,10 +94,24 @@ def make_item():
     item_data = request.json["item"]
     item = ProductItem(item_data["kind"], item_data["size"], item_data["color"])
 
+    item.finish_making() # XXX
+
     return jsonify({
         "error": None,
         "factory_id": factory_id,
         "item_id": item.id,
+    })
+
+@app.route("/api/check-item-status")
+def check_item_status():
+    item_id = request.args["id"]
+
+    with lock:
+        item = items_by_id[item_id]
+
+    return jsonify({
+        "error": None,
+        "status": item.status,
     })
 
 @app.route("/api/ship-item", methods=["POST"])

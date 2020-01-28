@@ -25,6 +25,8 @@ def make_and_ship_item(kind, size, color):
 
     item_id = response["item_id"]
 
+    print(requests.get(f"{factory_base_url}/api/check-item-status?id={item_id}").text)
+
     request = {"item_id": item_id, "store_id": store_id}
     response = requests.post(f"{factory_base_url}/api/ship-item", json=request).json()
     check_error(response)
