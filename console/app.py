@@ -18,60 +18,51 @@
 #
 
 import os
+import pprint
 import requests
 
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, render_template
 
 app = Flask(__name__)
 
 host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
 
+factory_host = os.environ["FACTORY_SERVICE_HOST"]
+factory_port = os.environ["FACTORY_SERVICE_PORT"]
+factory_base_url = f"http://{factory_host}:{factory_port}"
+
+def check_error(response_data):
+    if response_data["error"] is not None:
+        raise Exception(response_data["error"])
+
 @app.errorhandler(Exception)
 def error(e):
     app.logger.error(e)
     return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
 
+@app.route("/index.html")
 @app.route("/")
 def index():
-    return """
-<html>
-  <head>
-    <title>Salty Pug console</title>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo="/>
-  </head>
-  <body>
-    <h1>Salty Pug console</h1>
+    return render_template("index.html")
 
-    <h2>Make item</h2>
-
-    <form action="/make-item" method="post">
-      <p>Kind</p>
-      <p><input name="kind" value="cutlass"/></p>
-      <p>Size</p>
-      <p><input name="size" value="large"></p>
-      <p>Color</p>
-      <p><input name="color" value="blue"/></p>
-      <p><button type="submit">Submit</button></p>
-    </form>
-  </body>
-</html>
-""".strip()
-
-@app.route("/make-item", methods=["POST", "GET"])
+@app.route("/make-item", methods=["POST"])
 def make_item():
-    if request.method == "GET":
-        return "YUP"
-
-    print(222, request.method)
-
     kind = request.form["kind"]
     size = request.form["size"]
     color = request.form["color"]
 
-    print(111, kind, size, color)
+    request_data = {"item": {"kind": kind, "size": size, "color": color}}
+    response_data = requests.post(f"{factory_base_url}/api/make-item", json=request_data).json()
 
-    return "OK"
+    check_error(response_data)
+
+    request_data = pprint.pformat(request_data)
+    response_data = pprint.pformat(response_data)
+
+    return render_template("result.html",
+                           request_data=request_data,
+                           response_data=response_data)
 
 if __name__ == "__main__":
     app.run(host=host, port=port)

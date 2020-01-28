@@ -43,17 +43,5 @@ try:
             with start_process("python3 console/app.py") as console:
                 while True:
                     sleep(1)
-
-                # sleep(0.5)
-
-                # make_and_ship_item("cutlass", "large", "red")
-                # make_and_ship_item("cutlass", "large", "green")
-                # make_and_ship_item("cutlass", "small", "blue")
-
-                # print(requests.get(f"{store_base_url}/api/find-items?kind=cutlass&size=large").text)
-                # print(requests.get(f"{store_base_url}/api/find-items?kind=cutlass&size=small").text)
-                # print(requests.get(f"{store_base_url}/api/find-items?kind=pegleg&color=blue").text)
-
-                # print("SUCCESS")
 except KeyboardInterrupt:
     pass
