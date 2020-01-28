@@ -1,10 +1,12 @@
 .phony: run
-run: # build
+run:
 	scripts/run
 
 .phony: build
 build:
 	cd store && make build
+	cd factory && make build
+	cd console && make build
 
 .phony: clean
 clean:

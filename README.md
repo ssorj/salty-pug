@@ -2,41 +2,29 @@
 
 ## Services
 
- - [Store](store/)
- - [Factory](factory/)
- - [Truck](factory/)
-
-## Endpoints
-
-      //<entity-type>-any/api/             <- A dynamically selected thing (anycast balanced treatment)
-      //<entity-type>-all/api/             <- All the things (multicast)
-      //<entity-type>-<entity-id>/api/     <- A particular thing
-        - One for each store
-        - Note that this single service would still have multiple backing processes
+ - [Store](store/) - A place where items are sold
+ - [Factory](factory/) - A place where items are made
+ - [Truck](factory/) - A vehicle for transporting items
+ - [Console](console/) - A console for controlling the app
 
 ### Store endpoints
 
-      Handles //store-all/api/find-items
-      Handles //store-any/api/find-items
-      Handles //store-<store-id>/api/find-items
-      Handles //store-<store-id>/api/hold-item
-      Handles //store-<store-id>/api/stock-item
-      Calls //store-all/api/find-items
-      Calls //store-<store-id>/api/find-items
-      Calls //factory-all/api/find-items
-      Calls //factory-any/api/make-item
+      //store-all/api/find-items
+      //store-any/api/find-items
+      //store-<store-id>/api/find-items
+      //store-<store-id>/api/hold-item
+      //store-<store-id>/api/stock-item
 
 ### Factory endpoints
 
-      Handles //factory-all/api/find-items
-      Handles //factory-any/api/make-item
-      Handles //factory-<factory-id>/api/find-items
-      Handles //factory-<factory-id>/api/make-item
-      Calls //store-<store-id>/api/stock-item
+      //factory-all/api/find-items
+      //factory-any/api/make-item
+      //factory-<factory-id>/api/find-items
+      //factory-<factory-id>/api/make-item
 
 ## Item data
 
-An "item" in JSON format:
+A product "item" in JSON format:
 
     {
         "id": "<item-id>",  // A UUID. Not always present.
