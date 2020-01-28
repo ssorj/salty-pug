@@ -7,7 +7,7 @@
  - [Truck](factory/) - A vehicle for transporting items
  - [Console](console/) - A console for controlling the app
 
-### Store endpoints
+## Store endpoints
 
       //store-all/api/find-items
       //store-any/api/find-items
@@ -15,7 +15,7 @@
       //store-<store-id>/api/hold-item
       //store-<store-id>/api/stock-item
 
-### Factory endpoints
+## Factory endpoints
 
       //factory-all/api/find-items
       //factory-any/api/make-item
