@@ -27,3 +27,33 @@ for namespace in namespaces:
         call(f"skupper -n {namespace} init --enable-proxy-controller=false")
     else:
         call(f"skupper -n {namespace} init --edge")
+
+with working_temp_dir():
+    call("skupper -n infra-1 connection-token infra-1-token.yaml")
+    call("skupper -n store-1 connect infra-1-token.yaml")
+    call("skupper -n factory-1 connect infra-1-token.yaml")
+
+    call("skupper -n infra-2 connection-token infra-2-token.yaml")
+    call("skupper -n store-2 connect infra-2-token.yaml")
+    call("skupper -n factory-2 connect infra-2-token.yaml")
+
+    call("skupper -n infra-3 connection-token infra-3-token.yaml")
+    call("skupper -n store-3 connect infra-3-token.yaml")
+    call("skupper -n factory-3 connect infra-3-token.yaml")
+
+    call("skupper -n infra-4 connection-token infra-4-token.yaml")
+    call("skupper -n store-4 connect infra-4-token.yaml")
+    call("skupper -n factory-4 connect infra-4-token.yaml")
+
+for namespace in namespaces:
+    if namespace.startswith("store"):
+        call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address {namespace}")   # A particular store
+        call("skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-all")      # All stores (multicast)
+        call("skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-any")      # Any store (anycast)
+
+    if namespace.startswith("factory"):
+        call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address {namespace}") # A particular factory
+        call("skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-all")  # All factories (multicast)
+        call("skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-any")  # Any factory (anycast)
+
+call("kubectl -n console expose deployment console --port 8080 --type LoadBalancer")
