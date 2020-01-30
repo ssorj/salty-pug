@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: factory-4
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: factory
+  name: factory
+  namespace: factory-4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: factory
+  template:
+    metadata:
+      labels:
+        app: factory
+    spec:
+      containers:
+      - image: quay.io/skupper/salty-pug-factory
+        name: salty-pug-factory
+        env:
+        - name: STORE_SERVICE_HOST
+          value: store.store-1.svc
+        - name: STORE_SERVICE_PORT
+          value: "8080"

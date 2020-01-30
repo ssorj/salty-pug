@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+
+from plano import *
+
+call("kubectl apply -f resources")
+
+namespaces = [
+    "console",
+    "store-1",
+    "store-2",
+    "store-3",
+    "store-4",
+    "factory-1",
+    "factory-2",
+    "factory-3",
+    "factory-4",
+    "infra-1",
+    "infra-2",
+    "infra-3",
+    "infra-4",
+]
+
+# kubectl wait --all-namespaces namespace/console --for condition=available
+
+for namespace in namespaces:
+    call(f"skupper -n {namespace} init")
