@@ -45,6 +45,11 @@ with working_temp_dir():
     call("skupper -n store-4 connect infra-4-token.yaml")
     call("skupper -n factory-4 connect infra-4-token.yaml")
 
+    call("skupper -n infra-1 connect infra-2-token.yaml")
+    call("skupper -n infra-2 connect infra-3-token.yaml")
+    call("skupper -n infra-3 connect infra-4-token.yaml")
+    call("skupper -n infra-4 connect infra-1-token.yaml")
+
 for namespace in namespaces:
     if namespace.startswith("store"):
         call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address {namespace}")   # A particular store
