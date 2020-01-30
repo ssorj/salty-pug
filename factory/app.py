@@ -130,8 +130,7 @@ def ship_item():
         "item": item.data(),
     }
 
-    # XXX need to direct this to a particular store
-    requests.post(f"{store_any_base_url}/api/stock-item", json=data)
+    requests.post(f"http://{store_id}.svc:8080/api/stock-item", json=data)
 
     with lock:
         del items_by_id[item.id]
