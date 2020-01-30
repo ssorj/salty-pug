@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: store-1
+  name: store-2
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -9,7 +9,7 @@ metadata:
   labels:
     app: store
   name: store
-  namespace: store-1
+  namespace: store-2
 spec:
   replicas: 1
   selector:

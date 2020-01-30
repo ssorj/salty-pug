@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: factory-1
+  name: factory-3
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -9,7 +9,7 @@ metadata:
   labels:
     app: factory
   name: factory
-  namespace: factory-1
+  namespace: factory-3
 spec:
   replicas: 1
   selector:
