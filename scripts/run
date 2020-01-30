@@ -5,12 +5,26 @@ import requests
 from plano import *
 
 ENV["STORE_SERVICE_STORE_ID"] = store_id = "1"
+
 ENV["STORE_SERVICE_HOST"] = store_host = "localhost"
 ENV["STORE_SERVICE_PORT"] = store_port = str(get_random_port())
 
+ENV["STORE_SERVICE_HOST_ANY"] = store_host
+ENV["STORE_SERVICE_PORT_ANY"] = store_port
+
+ENV["STORE_SERVICE_HOST_ALL"] = store_host
+ENV["STORE_SERVICE_PORT_ALL"] = store_port
+
 ENV["FACTORY_SERVICE_FACTORY_ID"] = factory_id = "1"
+
 ENV["FACTORY_SERVICE_HOST"] = factory_host = "localhost"
 ENV["FACTORY_SERVICE_PORT"] = factory_port = str(get_random_port())
+
+ENV["FACTORY_SERVICE_HOST_ANY"] = factory_host
+ENV["FACTORY_SERVICE_PORT_ANY"] = factory_port
+
+ENV["FACTORY_SERVICE_HOST_ALL"] = factory_host
+ENV["FACTORY_SERVICE_PORT_ALL"] = factory_port
 
 ENV["CONSOLE_SERVICE_HOST"] = console_host = "localhost"
 ENV["CONSOLE_SERVICE_PORT"] = console_port = str(8080)

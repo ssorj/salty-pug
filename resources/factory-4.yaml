@@ -24,7 +24,9 @@ spec:
       - image: quay.io/skupper/salty-pug-factory
         name: salty-pug-factory
         env:
-        - name: STORE_SERVICE_HOST
-          value: store.store-1.svc
-        - name: STORE_SERVICE_PORT
-          value: "8080"
+        - name: FACTORY_SERVICE_FACTORY_ID
+          value: factory-4
+        - name: STORE_SERVICE_HOST_ANY
+          value: store-any.svc
+        - name: STORE_SERVICE_HOST_ALL
+          value: store-all.svc

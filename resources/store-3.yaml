@@ -23,3 +23,10 @@ spec:
       containers:
       - image: quay.io/skupper/salty-pug-store
         name: salty-pug-store
+        env:
+        - name: STORE_SERVICE_STORE_ID
+          value: store-3
+        - name: FACTORY_SERVICE_HOST_ANY
+          value: factory-any.svc
+        - name: FACTORY_SERVICE_HOST_ALL
+          value: factory-all.svc

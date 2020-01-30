@@ -30,6 +30,14 @@ store_id = os.environ.get("STORE_SERVICE_STORE_ID")
 host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
+factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
+factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
+factory_any_base_url = f"http://{factory_host_any}:{factory_port_any}"
+
+factory_host_all = os.environ["FACTORY_SERVICE_HOST_ALL"]
+factory_port_all = int(os.environ.get("FACTORY_SERVICE_PORT_ALL", 8080))
+factory_all_base_url = f"http://{factory_host_all}:{factory_port_all}"
+
 lock = Lock()
 items_by_id = dict()
 

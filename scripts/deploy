@@ -48,12 +48,12 @@ with working_temp_dir():
 for namespace in namespaces:
     if namespace.startswith("store"):
         call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address {namespace}")   # A particular store
-        call("skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-all")      # All stores (multicast)
+        call("skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-all")      # All stores (multicast) - XXX need --multicast
         call("skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-any")      # Any store (anycast)
 
     if namespace.startswith("factory"):
         call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address {namespace}") # A particular factory
-        call("skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-all")  # All factories (multicast)
+        call("skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-all")  # All factories (multicast) - XXX need --multicast
         call("skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-any")  # Any factory (anycast)
 
 call("kubectl -n console expose deployment console --port 8080 --type LoadBalancer")
