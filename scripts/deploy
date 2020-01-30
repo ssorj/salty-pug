@@ -24,6 +24,6 @@ namespaces = [
 
 for namespace in namespaces:
     if namespace.startswith("infra"):
-        call(f"skupper -n {namespace} init --enable-proxy-controller false")
+        call(f"skupper -n {namespace} init --enable-proxy-controller=false")
     else:
-        call(f"skupper -n {namespace} init")
+        call(f"skupper -n {namespace} init --edge")
