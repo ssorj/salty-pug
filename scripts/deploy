@@ -17,8 +17,6 @@ namespaces = [
     "infra-3",
 ]
 
-# kubectl wait --all-namespaces namespace/console --for condition=available
-
 for namespace in namespaces:
     if namespace.startswith("infra"):
         call(f"skupper -n {namespace} init --enable-proxy-controller=false")
@@ -54,5 +52,6 @@ for namespace in namespaces:
     if namespace.startswith("factory"):
         call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address {namespace}") # A particular factory
         call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-any") # Any factory (anycast)
+        call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-all") # All factories (multicast) - XXX need --multicast
 
-call("kubectl -n console expose deployment console --port 8080 --type LoadBalancer")
+call("kubectl -n console expose deployment console --port 9090 --target-port 9090 --type LoadBalancer")

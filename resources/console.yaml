@@ -24,8 +24,8 @@ spec:
       - image: quay.io/skupper/salty-pug-console
         name: salty-pug-console
         env:
-        - name: STORE_SERVICE_HOST_ANY
-          value: store-any.svc
+        - name: CONSOLE_SERVICE_PORT
+          value: "9090"
         - name: STORE_SERVICE_HOST_ALL
           value: store-all.svc
         - name: FACTORY_SERVICE_HOST_ANY
