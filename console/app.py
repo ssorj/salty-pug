@@ -28,9 +28,13 @@ app = Flask(__name__)
 host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
 
-factory_host = os.environ["FACTORY_SERVICE_HOST"]
-factory_port = os.environ["FACTORY_SERVICE_PORT"]
-factory_base_url = f"http://{factory_host}:{factory_port}"
+store_host_all = os.environ["STORE_SERVICE_HOST_ALL"]
+store_port_all = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
+store_all_base_url = f"http://{store_host_all}:{store_port_all}"
+
+factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
+factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
+factory_any_base_url = f"http://{factory_host_any}:{factory_port_any}"
 
 def check_error(response_data):
     if response_data["error"] is not None:
@@ -53,7 +57,7 @@ def make_item():
     color = request.form["color"]
 
     request_data = {"item": {"kind": kind, "size": size, "color": color}}
-    response_data = requests.post(f"{factory_base_url}/api/make-item", json=request_data).json()
+    response_data = requests.post(f"{factory_any_base_url}/api/make-item", json=request_data).json()
 
     check_error(response_data)
 

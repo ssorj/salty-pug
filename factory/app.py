@@ -30,10 +30,6 @@ factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
 
-store_host_any = os.environ["STORE_SERVICE_HOST_ANY"]
-store_port_any = int(os.environ.get("STORE_SERVICE_PORT_ANY", 8080))
-store_any_base_url = f"http://{store_host_any}:{store_port_any}"
-
 store_host_all = os.environ["STORE_SERVICE_HOST_ALL"]
 store_port_all = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
 store_all_base_url = f"http://{store_host_all}:{store_port_all}"

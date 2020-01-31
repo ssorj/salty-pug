@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+
+from plano import *
+
+namespaces = [
+    "console",
+    "store-1",
+    "store-2",
+    "store-3",
+    "factory-1",
+    "factory-2",
+    "factory-3",
+    "infra-1",
+    "infra-2",
+    "infra-3",
+]
+
+for namespace in namespaces:
+    if namespace.startswith("store"):
+        call(f"kubectl -n {namespace} rollout restart deployment/store")
+
+    if namespace.startswith("factory"):
+        call(f"kubectl -n {namespace} rollout restart deployment/factory")
+
+    if namespace == "console":
+        call(f"kubectl -n {namespace} rollout restart deployment/console")
