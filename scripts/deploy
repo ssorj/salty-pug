@@ -9,15 +9,12 @@ namespaces = [
     "store-1",
     "store-2",
     "store-3",
-    "store-4",
     "factory-1",
     "factory-2",
     "factory-3",
-    "factory-4",
     "infra-1",
     "infra-2",
     "infra-3",
-    "infra-4",
 ]
 
 # kubectl wait --all-namespaces namespace/console --for condition=available
@@ -41,29 +38,21 @@ with temp_working_dir():
     call("skupper -n store-3 connect infra-3-token.yaml")
     call("skupper -n factory-3 connect infra-3-token.yaml")
 
-    call("skupper -n infra-4 connection-token infra-4-token.yaml")
-    call("skupper -n store-4 connect infra-4-token.yaml")
-    call("skupper -n factory-4 connect infra-4-token.yaml")
-
     call("skupper -n infra-1 connect infra-2-token.yaml")
     call("skupper -n infra-2 connect infra-3-token.yaml")
-    call("skupper -n infra-3 connect infra-4-token.yaml")
-    call("skupper -n infra-4 connect infra-1-token.yaml")
+    call("skupper -n infra-3 connect infra-1-token.yaml")
 
     call("skupper -n console connect infra-1-token.yaml")
     call("skupper -n console connect infra-2-token.yaml")
     call("skupper -n console connect infra-3-token.yaml")
-    call("skupper -n console connect infra-4-token.yaml")
 
 for namespace in namespaces:
     if namespace.startswith("store"):
         call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address {namespace}")   # A particular store
-        call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-all")      # All stores (multicast) - XXX need --multicast
-        call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-any")      # Any store (anycast)
+        call(f"skupper -n {namespace} expose deployment store --port 8080 --protocol http --address store-all")     # All stores (multicast) - XXX need --multicast
 
     if namespace.startswith("factory"):
         call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address {namespace}") # A particular factory
-        call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-all")  # All factories (multicast) - XXX need --multicast
-        call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-any")  # Any factory (anycast)
+        call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-any") # Any factory (anycast)
 
 call("kubectl -n console expose deployment console --port 8080 --type LoadBalancer")
