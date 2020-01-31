@@ -54,4 +54,4 @@ for namespace in namespaces:
         call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-any") # Any factory (anycast)
         call(f"skupper -n {namespace} expose deployment factory --port 8080 --protocol http --address factory-all") # All factories (multicast) - XXX need --multicast
 
-call("kubectl -n console expose deployment console --port 9090 --target-port 9090 --type LoadBalancer")
+call("kubectl -n console expose deployment console --port 9090 --target-port 8080 --type LoadBalancer")
