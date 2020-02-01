@@ -19,7 +19,10 @@
 
 import os
 import pprint
+import random
 import requests
+import threading
+import time
 
 from flask import Flask, Response, request, jsonify, render_template
 
@@ -30,11 +33,11 @@ port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
 
 store_host_all = os.environ["STORE_SERVICE_HOST_ALL"]
 store_port_all = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
-store_all_base_url = f"http://{store_host_all}:{store_port_all}"
+store_all_url = f"http://{store_host_all}:{store_port_all}"
 
 factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
 factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
-factory_any_base_url = f"http://{factory_host_any}:{factory_port_any}"
+factory_url_any = f"http://{factory_host_any}:{factory_port_any}"
 
 def check_error(response_data):
     if response_data["error"] is not None:
@@ -56,8 +59,7 @@ def make_item():
     size = request.form["size"]
     color = request.form["color"]
 
-    request_data = {"item": {"kind": kind, "size": size, "color": color}}
-    response_data = requests.post(f"{factory_any_base_url}/api/make-item", json=request_data).json()
+    request_data, response_data = _make_item(kind, size, color)
 
     check_error(response_data)
 
@@ -68,5 +70,35 @@ def make_item():
                            request_data=request_data,
                            response_data=response_data)
 
+def _make_item(kind, size, color):
+    request_data = {"item": {"kind": kind, "size": size, "color": color}}
+    response_data = requests.post(f"{factory_url_any}/api/make-item", json=request_data).json()
+
+    return request_data, response_data
+
+kinds = "cutlass", "parrot", "pegleg"
+sizes = "small", "medium", "large"
+colors = "red", "green", "blue"
+
+class MakeItemThread(threading.Thread):
+    def __init__(self):
+        super().__init__()
+
+        self.daemon = True
+        self.enabled = True
+
+    def run(self):
+        while True:
+            time.sleep(1)
+
+            while self.enabled:
+                time.sleep(1)
+
+                _make_item(random.choice(kinds), random.choice(sizes), random.choice(colors))
+
+make_item_thread = MakeItemThread()
+
 if __name__ == "__main__":
+    make_item_thread.run()
+
     app.run(host=host, port=port)
