@@ -8,6 +8,13 @@ build:
 	cd factory && make build
 	cd console && make build
 
+# Prerequisite: podman login quay.io
+.PHONY: push
+push: build
+	cd store && make push
+	cd factory && make push
+	cd console && make push
+
 .phony: clean
 clean:
 	rm -rf scripts/__pycache__

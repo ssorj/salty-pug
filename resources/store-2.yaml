@@ -27,8 +27,8 @@ spec:
         - name: STORE_SERVICE_STORE_ID
           value: store-2
         - name: STORE_SERVICE_HOST_ALL
-          value: store-all.svc
+          value: store-all
         - name: FACTORY_SERVICE_HOST_ANY
-          value: factory-any.svc
+          value: factory-any
         - name: FACTORY_SERVICE_HOST_ALL
-          value: factory-all.svc
+          value: factory-all

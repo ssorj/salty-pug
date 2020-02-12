@@ -123,7 +123,7 @@ def ship_item():
         "item": item.data(),
     }
 
-    requests.post(f"http://{store_id}.svc:8080/api/stock-item", json=data)
+    requests.post(f"http://{store_id}:8080/api/stock-item", json=data)
 
     with lock:
         del items_by_id[item.id]
