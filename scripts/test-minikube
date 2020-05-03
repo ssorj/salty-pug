@@ -1,0 +1,33 @@
+#!/usr/bin/python3
+
+from common import *
+
+def main():
+    check_environment()
+
+    call("minikube version")
+
+    test_profile = "salty-pug"
+    test_kubeconfig = make_temp_file()
+
+    with open("/tmp/minikube-tunnel-output", "w") as tunnel_output_file:
+        try:
+            with working_env(KUBECONFIG=test_kubeconfig):
+                call(f"minikube start -p {test_profile}")
+
+                with start_process(f"minikube tunnel -p {test_profile}", output=tunnel_output_file):
+                    run_test()
+
+                notice("Test result: PASSED")
+        except:
+            error("Test result: FAILED")
+            raise
+        finally:
+            call(f"minikube tunnel -p {test_profile} --cleanup")
+            call(f"minikube delete -p {test_profile}")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass

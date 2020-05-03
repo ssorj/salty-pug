@@ -1,15 +1,23 @@
+.phony: test
+test:
+	python3 scripts/test-minikube
+
+.phony: demo
+demo:
+	SKUPPER_DEMO=1 scripts/test-minikube
+
 .phony: run
 run:
 	scripts/run
 
-.phony: build
+.phony: build-images
 build:
 	cd store && make build
 	cd factory && make build
 	cd console && make build
 
 # Prerequisite: podman login quay.io
-.PHONY: push
+.PHONY: push-images
 push: build
 	cd store && make push
 	cd factory && make push
