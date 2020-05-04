@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: console
+  name: hq
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -9,7 +9,7 @@ metadata:
   labels:
     app: console
   name: console
-  namespace: console
+  namespace: hq
 spec:
   replicas: 1
   selector:
