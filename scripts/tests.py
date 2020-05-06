@@ -1,6 +1,8 @@
-from plano import *
+from skewer import *
 
 def run_test():
+    ENV["SKUPPER_PROXY_IMAGE"] = "quay.io/skupper/proxy"
+
     call("kubectl apply -f resources")
 
     namespaces = [
@@ -49,6 +51,10 @@ def run_test():
     call("skupper -n hq service create factory-all 8080 --mapping http --aggregate json")
     call("skupper -n hq service create factory-any 8080 --mapping http")
 
+    wait_for_resource("service", "store-all", namespace="hq")
+    wait_for_resource("service", "factory-all", namespace="hq")
+    wait_for_resource("service", "factory-any", namespace="hq")
+
     for namespace in namespaces:
         if namespace.startswith("store"):
             wait_for_resource("service", "store-all", namespace=namespace)
@@ -66,16 +72,24 @@ def run_test():
 
     call("kubectl -n hq expose deployment console --port 9090 --target-port 8080 --type LoadBalancer")
 
+    call("kubectl -n hq apply -f ingress.yaml")
+
+    store_all_ip = get_ingress_ip("ingress", "store-all", namespace="hq")
+
     if "SKUPPER_DEMO" in ENV:
-        console_ip = get_ingress_ip("service", "skupper-controller", namespace="hq")
-        console_url = f"http://{console_ip}:8080/"
+        console_ip = get_ingress_ip("service", "console", namespace="hq")
+        console_url = f"http://{console_ip}:9090/"
+        skupper_console_ip = get_ingress_ip("service", "skupper-controller", namespace="hq")
+        skupper_console_url = f"http://{skupper_console_ip}:8080/"
         password_data = call_for_stdout("kubectl -n hq get secret skupper-console-users -o jsonpath='{.data.admin}'")
         password = base64_decode(password_data).decode("ascii")
 
         print()
         print("Demo time!")
         print()
-        print(f"Console URL: {console_url}")
+        print(f"Kubeconfig: {ENV['KUBECONFIG']}")
+        print(f"Console: {console_url}")
+        print(f"Skupper console: {skupper_console_url}")
         print("User: admin")
         print(f"Password: {password}")
         print()
