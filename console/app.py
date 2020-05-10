@@ -17,6 +17,7 @@
 # under the License.
 #
 
+import logging
 import os
 import pprint
 import random
@@ -27,6 +28,7 @@ import time
 from flask import Flask, Response, request, jsonify, render_template
 
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 
 host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
@@ -71,6 +73,8 @@ def make_item():
                            response_data=response_data)
 
 def _make_item(kind, size, color):
+    app.logger.info(f"Making item ({kind}, {size}, {color})")
+
     request_data = {"item": {"kind": kind, "size": size, "color": color}}
     response_data = requests.post(f"{factory_url_any}/api/make-item", json=request_data).json()
 

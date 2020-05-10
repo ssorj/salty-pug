@@ -14,7 +14,6 @@ def main():
         try:
             with working_env(KUBECONFIG=test_kubeconfig):
                 call(f"minikube -p {test_profile} start")
-                call(f"minikube -p {test_profile} addons enable ingress")
 
                 with start_process(f"minikube tunnel -p {test_profile}", output=tunnel_output_file):
                     run_test()

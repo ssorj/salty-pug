@@ -17,6 +17,7 @@
 # under the License.
 #
 
+import logging
 import os
 import requests
 import uuid
@@ -25,6 +26,7 @@ from flask import Flask, Response, request, jsonify
 from threading import Lock
 
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 
 factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 

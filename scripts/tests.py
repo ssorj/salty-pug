@@ -1,7 +1,10 @@
 from skewer import *
 
 def run_test():
-    ENV["SKUPPER_PROXY_IMAGE"] = "quay.io/skupper/proxy"
+    # XXX
+    ENV["SKUPPER_PROXY_IMAGE"] = "quay.io/skupper/proxy:latest"
+    ENV["SKUPPER_CONTROLLER_IMAGE"] = "quay.io/ernieallen/controller:latest"
+    # End XXX
 
     call("kubectl apply -f resources")
 
@@ -70,15 +73,11 @@ def run_test():
             call(f"skupper -n {namespace} bind factory-any deployment factory --protocol http") # Any factory (anycast)
             call(f"skupper -n {namespace} bind factory-all deployment factory --protocol http") # All factories (multicast query)
 
-    call("kubectl -n hq expose deployment console --port 9090 --target-port 8080 --type LoadBalancer")
-
-    call("kubectl -n hq apply -f ingress.yaml")
-
-    store_all_ip = get_ingress_ip("ingress", "store-all", namespace="hq")
+    call("kubectl -n hq expose deployment console --port 9999 --target-port 8080 --type LoadBalancer")
 
     if "SKUPPER_DEMO" in ENV:
         console_ip = get_ingress_ip("service", "console", namespace="hq")
-        console_url = f"http://{console_ip}:9090/"
+        console_url = f"http://{console_ip}:9999/"
         skupper_console_ip = get_ingress_ip("service", "skupper-controller", namespace="hq")
         skupper_console_url = f"http://{skupper_console_ip}:8080/"
         password_data = call_for_stdout("kubectl -n hq get secret skupper-console-users -o jsonpath='{.data.admin}'")
@@ -88,7 +87,7 @@ def run_test():
         print("Demo time!")
         print()
         print(f"Kubeconfig: {ENV['KUBECONFIG']}")
-        print(f"Console: {console_url}")
+        print(f"Salty Pug console: {console_url}")
         print(f"Skupper console: {skupper_console_url}")
         print("User: admin")
         print(f"Password: {password}")
