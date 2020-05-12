@@ -19,11 +19,9 @@
 
 import logging
 import os
-import requests
-import uuid
 
 from flask import Flask, Response, request, jsonify
-from threading import Lock
+from model import *
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
@@ -33,41 +31,7 @@ store_id = os.environ.get("STORE_SERVICE_STORE_ID")
 host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
-factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
-factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
-factory_any_base_url = f"http://{factory_host_any}:{factory_port_any}"
-
-factory_host_all = os.environ["FACTORY_SERVICE_HOST_ALL"]
-factory_port_all = int(os.environ.get("FACTORY_SERVICE_PORT_ALL", 8080))
-factory_all_base_url = f"http://{factory_host_all}:{factory_port_all}"
-
-lock = Lock()
-items_by_id = dict()
-
-class ProductItem:
-    def __init__(self, kind, size, color, id=None):
-        assert kind in ("cutlass", "parrot", "pegleg")
-        assert size in ("small", "medium", "large")
-        assert color in ("red", "green", "blue")
-
-        self.id = str(uuid.uuid4())
-        self.kind = kind
-        self.size = size
-        self.color = color
-
-        with lock:
-            items_by_id[self.id] = self
-
-    def data(self):
-        return {
-            "id": self.id,
-            "kind": self.kind,
-            "size": self.size,
-            "color": self.color,
-        }
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.kind},{self.size},{self.color})"
+model = Model()
 
 @app.errorhandler(Exception)
 def error(e):
@@ -76,18 +40,11 @@ def error(e):
 
 @app.route("/api/find-items")
 def find_items():
-    kind = request.args["kind"]
+    product = model.get_product(request.args.get("product_id"))
     size = request.args.get("size")
     color = request.args.get("color")
 
-    results = list()
-
-    with lock:
-        for item in items_by_id.values():
-            if item.kind == kind:
-                if size is None or item.size == size:
-                    if color is None or item.color == color:
-                        results.append(item.data())
+    results = model.find_items(product, size, color)
 
     return jsonify({
         "error": None,
@@ -96,8 +53,9 @@ def find_items():
 
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
-    item_data = request.json["item"]
-    item = ProductItem(item_data["kind"], item_data["size"], item_data["color"], id=item_data["id"])
+    item = ProductItem.load(model, request.json["item"])
+
+    model.add_item(item)
 
     return jsonify({
         "error": None,

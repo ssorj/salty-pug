@@ -1,7 +1,7 @@
 IMAGE := quay.io/skupper/salty-pug-factory
 
 .PHONY: build
-build:
+build: model.py
 	podman build -t ${IMAGE} .
 
 .PHONY: run
@@ -12,3 +12,6 @@ run: build
 .PHONY: push
 push: build
 	podman push -q ${IMAGE}
+
+model.py: ../common/model.py
+	cp $< $@

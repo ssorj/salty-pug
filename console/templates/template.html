@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Salty Pug</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/static/main.css"/>
+    <script src="/static/main.js"></script>
+  </head>
+  <body>
+    <header>
+      <div>
+        <a id="logotype" href="">Salty Pug</a>
+        <nav id="top-nav">
+          <a href="/index.html">Overview</a>
+          <a href="/inventory/index.html">Inventory</a>
+          <a href="/orders/index.html">Orders</a>
+        </nav>
+        <nav id="global-nav">
+          <a href="">Hi, Noah</a>
+        </nav>
+      </div>
+    </header>
+    <section>
+      <div>
+        {% block content %}{% endblock %}
+      </div>
+    </section>
+    <footer>
+      <div>
+      </div>
+    </footer>
+  </body>
+</html>

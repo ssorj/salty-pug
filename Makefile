@@ -1,3 +1,7 @@
+.phony: run
+run: build
+	scripts/run
+
 .phony: test
 test:
 	python3 scripts/test-minikube

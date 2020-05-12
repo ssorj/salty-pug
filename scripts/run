@@ -29,28 +29,6 @@ ENV["FACTORY_SERVICE_PORT_ALL"] = factory_port
 ENV["CONSOLE_SERVICE_HOST"] = console_host = "localhost"
 ENV["CONSOLE_SERVICE_PORT"] = console_port = str(8080)
 
-store_base_url = f"http://{store_host}:{store_port}"
-factory_base_url = f"http://{factory_host}:{factory_port}"
-
-def check_error(response):
-    if response["error"] is not None:
-        raise Exception(response["error"])
-
-def make_and_ship_item(kind, size, color):
-    request = {"item": {"kind": kind, "size": size, "color": color}}
-    response = requests.post(f"{factory_base_url}/api/make-item", json=request).json()
-    check_error(response)
-
-    item_id = response["item_id"]
-
-    print(requests.get(f"{factory_base_url}/api/check-item-status?id={item_id}").text)
-
-    request = {"item_id": item_id, "store_id": store_id}
-    response = requests.post(f"{factory_base_url}/api/ship-item", json=request).json()
-    check_error(response)
-
-    return item_id
-
 try:
     with start_process("python3 store/app.py") as store:
         with start_process("python3 factory/app.py") as factory:
