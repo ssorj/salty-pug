@@ -17,26 +17,17 @@
 # under the License.
 #
 
-import logging
-import os
-
-from flask import Flask, Response, request, jsonify
-from model import *
-
-app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
+from common import *
 
 factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 
 host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
 
+app = Flask(__name__)
 model = Model()
 
-@app.errorhandler(Exception)
-def error(e):
-    app.logger.error(e)
-    return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
+setup_app(app)
 
 @app.route("/api/make-item", methods=["POST"])
 def make_item():

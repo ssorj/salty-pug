@@ -17,21 +17,17 @@
 # under the License.
 #
 
-import logging
-import os
-
-from flask import Flask, Response, request, jsonify
-from model import *
-
-app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
+from common import *
 
 store_id = os.environ.get("STORE_SERVICE_STORE_ID")
 
 host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
+app = Flask(__name__)
 model = Model()
+
+setup_app(app)
 
 @app.errorhandler(Exception)
 def error(e):

@@ -1,17 +1,23 @@
 IMAGE := quay.io/skupper/salty-pug-store
 
 .PHONY: build
-build: model.py
-	podman build -t ${IMAGE} .
+build: common.py model.py
+	docker build -t ${IMAGE} .
 
 .PHONY: run
 run: build
-	podman run --rm -p 8080:8080 ${IMAGE}
+	docker run --rm -p 8080:8080 ${IMAGE}
 
-# Prerequisite: podman login quay.io
+# Prerequisite: docker login quay.io
 .PHONY: push
 push: build
-	podman push -q ${IMAGE}
+	docker push -q ${IMAGE}
 
-model.py: ../common/model.py
+.PHONY: clean
+clean:
+	rm -rf __pycache__/
+
+../common/%.py: ;
+
+%.py: ../common/%.py
 	cp $< $@

@@ -21,7 +21,8 @@ FROM registry.fedoraproject.org/fedora-minimal
 
 RUN microdnf install python3-flask python3-requests && microdnf clean all
 
-COPY app.py /app/app.py
+COPY *.py /app/
+COPY static /app/static
 COPY templates /app/templates
 ENV HOME=/app
 

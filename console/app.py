@@ -17,22 +17,10 @@
 # under the License.
 #
 
-import logging
-import os
-import pprint
-import random
+from common import *
+
 import requests
 import threading
-import time
-
-from flask import Flask, Response, Markup, request, jsonify, render_template
-from model import *
-
-app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
-
-# Defeat caching during development
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
@@ -45,16 +33,10 @@ factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
 factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
 factory_any = f"http://{factory_host_any}:{factory_port_any}"
 
+app = Flask(__name__)
 model = Model()
 
-def check_error(response_data):
-    if response_data["error"] is not None:
-        raise Exception(response_data["error"])
-
-@app.errorhandler(Exception)
-def error(e):
-    app.logger.error(e)
-    return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
+setup_app(app)
 
 @app.route("/index.html")
 @app.route("/")
@@ -148,6 +130,7 @@ class MakeItemThread(threading.Thread):
 
                 item = ProductItem(model, product, size, color)
 
+                print(111)
                 item.make(store)
 
 make_item_thread = MakeItemThread()

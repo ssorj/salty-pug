@@ -17,13 +17,30 @@
 # under the License.
 #
 
-FROM registry.fedoraproject.org/fedora-minimal
+from model import *
 
-RUN microdnf install python3-flask python3-requests && microdnf clean all
+import random
+import time
 
-COPY *.py /app/
-ENV HOME=/app
+from flask import Flask, Response, Markup, request, jsonify, render_template
 
-EXPOSE 8080
+_app = None
 
-CMD ["python3", "/app/app.py"]
+def setup_app(app):
+    global _app
+    _app = app
+
+    app.logger.setLevel(logging.INFO)
+
+    # Defeat caching during development
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+    app.register_error_handler(Exception, _handle_error)
+
+def _handle_error(e):
+    _app.logger.error(e)
+    return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
+
+def check_error(response):
+    if response["error"] is not None:
+        raise Exception(response["error"])
