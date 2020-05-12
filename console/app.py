@@ -20,9 +20,6 @@
 from common import *
 from flask import render_template
 
-import pprint
-import requests
-
 host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
 
@@ -68,6 +65,7 @@ def inventory_table():
 
     out.append("</table>");
 
+    import pprint
     out.append(f"<pre>{pprint.pformat(data)}</pre>");
 
     return Markup("".join(out))
@@ -76,6 +74,21 @@ def inventory_table():
 @app.route("/orders/")
 def orders_index():
     return render_template("/orders/index.html", func=func)
+
+@app.route("/scripts/generate-inventory")
+def scripts_generate_inventory():
+    generate_inventory(model)
+    return Response(f"OK\n", status=200, mimetype="text/plain")
+
+@app.route("/scripts/pretty-data")
+def scripts_pretty_data():
+    import pprint
+    import requests
+
+    url = request.args["url"]
+    data = requests.get(url).json()
+
+    return Response(pprint.pformat(data), status=200, mimetype="text/plain")
 
 # @app.route("/make-item", methods=["POST"])
 # def make_item():

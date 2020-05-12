@@ -21,16 +21,4 @@
 
 from common import *
 
-import random
-
-model = Model()
-
-for i in range(20):
-    store = random.choice(list(model._stores_by_id.values()))
-    product = random.choice(list(model._products_by_id.values()))
-    size = random.choice(model.sizes)
-    color = random.choice(model.colors)
-
-    item = ProductItem(model, product, size, color)
-
-    item.make(store)
+generate_inventory(Model())

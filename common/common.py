@@ -44,3 +44,16 @@ def create_app(module_name, id):
 def check_error(response):
     if response["error"] is not None:
         raise Exception(response["error"])
+
+def generate_inventory(model):
+    import random
+
+    for i in range(20):
+        store = random.choice(list(model._stores_by_id.values()))
+        product = random.choice(list(model._products_by_id.values()))
+        size = random.choice(model.sizes)
+        color = random.choice(model.colors)
+
+        item = ProductItem(model, product, size, color)
+
+        item.make(store)
