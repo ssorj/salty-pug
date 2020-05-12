@@ -99,7 +99,7 @@ class Model:
         # XXX Check for errors
 
         for response in data:
-            results.extend(response["items"])
+            results.extend(response["content"]["items"])
 
         return results, data
 

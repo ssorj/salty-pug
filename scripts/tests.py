@@ -86,7 +86,7 @@ def run_test():
         print()
         print("Demo time!")
         print()
-        print(f"Kubeconfig: {ENV['KUBECONFIG']}")
+        print(f"Kubeconfig: export KUBECONFIG={ENV['KUBECONFIG']}")
         print(f"Salty Pug console: {console_url}")
         print(f"Skupper console: {skupper_console_url}")
         print("User: admin")
