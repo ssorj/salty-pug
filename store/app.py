@@ -24,15 +24,7 @@ store_id = os.environ.get("STORE_SERVICE_STORE_ID")
 host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
 
-app = Flask(__name__)
-model = Model()
-
-setup_app(app)
-
-@app.errorhandler(Exception)
-def error(e):
-    app.logger.error(e)
-    return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
+app, model = create_app(__name__, store_id)
 
 @app.route("/api/find-items")
 def find_items():
@@ -50,6 +42,7 @@ def find_items():
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
     item = ProductItem.load(model, request.json["item"])
+    item.store = model.get_store(store_id)
 
     model.add_item(item)
 

@@ -4,7 +4,7 @@ import requests
 
 from plano import *
 
-ENV["STORE_SERVICE_STORE_ID"] = store_id = "1"
+ENV["STORE_SERVICE_STORE_ID"] = store_id = "store-1"
 
 ENV["STORE_SERVICE_HOST"] = store_host = "localhost"
 ENV["STORE_SERVICE_PORT"] = store_port = str(get_random_port())
@@ -14,7 +14,7 @@ ENV["STORE_SERVICE_HOST_OVERRIDE"] = store_host
 ENV["STORE_SERVICE_HOST_ALL"] = store_host
 ENV["STORE_SERVICE_PORT_ALL"] = store_port
 
-ENV["FACTORY_SERVICE_FACTORY_ID"] = factory_id = "1"
+ENV["FACTORY_SERVICE_FACTORY_ID"] = factory_id = "factory-1"
 
 ENV["FACTORY_SERVICE_HOST"] = factory_host = "localhost"
 ENV["FACTORY_SERVICE_PORT"] = factory_port = str(get_random_port())
@@ -29,6 +29,11 @@ try:
     with start_process("python3 store/app.py") as store:
         with start_process("python3 factory/app.py") as factory:
             with start_process("python3 console/app.py") as console:
+                sleep(0.5)
+
+                with working_env(PYTHONPATH="common"):
+                    call("scripts/generate-inventory")
+
                 while True:
                     sleep(1)
 except KeyboardInterrupt:

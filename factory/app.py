@@ -24,10 +24,7 @@ factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
 
-app = Flask(__name__)
-model = Model()
-
-setup_app(app)
+app, model = create_app(__name__, factory_id)
 
 @app.route("/api/make-item", methods=["POST"])
 def make_item():

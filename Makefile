@@ -10,14 +10,14 @@ test:
 demo:
 	SKUPPER_DEMO=1 python3 scripts/test-minikube
 
-.phony: build-images
+.phony: build
 build:
 	cd store && make build
 	cd factory && make build
 	cd console && make build
 
 # Prerequisite: podman login quay.io
-.PHONY: push-images
+.PHONY: push
 push: build
 	cd store && make push
 	cd factory && make push
@@ -25,6 +25,9 @@ push: build
 
 .phony: clean
 clean:
+	cd store && make clean
+	cd factory && make clean
+	cd console && make clean
 	rm -rf scripts/__pycache__
 	rm -f README.html
 

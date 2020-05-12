@@ -18,9 +18,10 @@
 #
 
 from common import *
+from flask import render_template
 
+import pprint
 import requests
-import threading
 
 host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
 port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
@@ -33,10 +34,7 @@ factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
 factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
 factory_any = f"http://{factory_host_any}:{factory_port_any}"
 
-app = Flask(__name__)
-model = Model()
-
-setup_app(app)
+app, model = create_app(__name__, "console")
 
 @app.route("/index.html")
 @app.route("/")
@@ -54,28 +52,28 @@ def inventory_index():
 def inventory_table():
     out = list()
 
-    response_data = requests.get(f"{store_all}/api/find-items").json()
-    items = response_data["items"]
-
-    out.append(f"<pre>{response_data}</pre>");
+    items, data = model.find_items_all_stores(None, None, None)
 
     out.append("<table>");
-    out.append("<tr><th>ID</th><th>Kind</th><th>Size</th><th>Color</th></tr>");
+    out.append("<tr><th>ID</th><th>Kind</th><th>Size</th><th>Color</th><th>Store</th></tr>");
 
     for item in items:
         out.append("<tr>");
         out.append(f"<td>{item['id']}</td>");
-        out.append(f"<td>{item['kind']}</td>");
+        out.append(f"<td>{item['product_id']}</td>");
         out.append(f"<td>{item['size']}</td>");
         out.append(f"<td>{item['color']}</td>");
+        out.append(f"<td>{item.get('store_id')}</td>");
         out.append("</tr>");
 
     out.append("</table>");
 
+    out.append(f"<pre>{pprint.pformat(data)}</pre>");
+
     return Markup("".join(out))
 
 @app.route("/orders/index.html")
-@app.route("/ordres/")
+@app.route("/orders/")
 def orders_index():
     return render_template("/orders/index.html", func=func)
 
@@ -96,46 +94,5 @@ def orders_index():
 #                            request_data=request_data,
 #                            response_data=response_data)
 
-# def _make_item(kind, size, color):
-#     app.logger.info(f"Making item ({kind}, {size}, {color})")
-
-#     request_data = {"item": {"kind": kind, "size": size, "color": color}}
-#     response_data = requests.post(f"{factory_any}/api/make-item", json=request_data).json()
-
-#     return request_data, response_data
-
-sizes = "small", "medium", "large"
-colors = "red", "green", "blue"
-
-class MakeItemThread(threading.Thread):
-    def __init__(self):
-        super().__init__()
-
-        self.daemon = True
-        self.enabled = True
-
-    def run(self):
-        while True:
-            time.sleep(1)
-
-            while self.enabled:
-                time.sleep(1)
-
-                with model._lock:
-                    store = random.choice(list(model._stores_by_id.values()))
-                    product = random.choice(list(model._products_by_id.values()))
-
-                size = random.choice(sizes)
-                color = random.choice(colors)
-
-                item = ProductItem(model, product, size, color)
-
-                print(111)
-                item.make(store)
-
-make_item_thread = MakeItemThread()
-
 if __name__ == "__main__":
-    make_item_thread.start()
-
-    app.run(host=host, port=port, debug=True)
+    app.run(host=host, port=port)

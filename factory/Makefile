@@ -15,6 +15,8 @@ push: build
 
 .PHONY: clean
 clean:
+	rm model.py
+	rm common.py
 	rm -rf __pycache__/
 
 ../common/%.py: ;

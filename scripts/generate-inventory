@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -17,30 +19,18 @@
 # under the License.
 #
 
-from model import *
-from flask import Flask, Response, Markup, request, jsonify
+from common import *
 
-import traceback as _traceback
+import random
 
-def create_app(module_name, id):
-    app = Flask(module_name)
+model = Model()
 
-    app.logger.setLevel(logging.INFO)
+for i in range(20):
+    store = random.choice(list(model._stores_by_id.values()))
+    product = random.choice(list(model._products_by_id.values()))
+    size = random.choice(model.sizes)
+    color = random.choice(model.colors)
 
-    # Defeat caching during development
-    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+    item = ProductItem(model, product, size, color)
 
-    def handle_error(e):
-        _traceback.print_exc()
-
-        app.logger.error(e)
-
-        return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
-
-    app.register_error_handler(Exception, handle_error)
-
-    return app, Model()
-
-def check_error(response):
-    if response["error"] is not None:
-        raise Exception(response["error"])
+    item.make(store)

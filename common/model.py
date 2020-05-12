@@ -25,6 +25,12 @@ import requests as _requests
 import threading as _threading
 import uuid as _uuid
 
+# XXX
+
+store_host_all = os.environ["STORE_SERVICE_HOST_ALL"]
+store_port_all = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
+store_all = f"http://{store_host_all}:{store_port_all}"
+
 class Model:
     def __init__(self):
         self._lock = _threading.Lock()
@@ -45,6 +51,9 @@ class Model:
         self.cutlass = Product(self, "Cutlass", id="cutlass")
         self.parrot = Product(self, "Parrot", id="parrot")
         self.pegleg = Product(self, "Pegleg", id="pegleg")
+
+        self.sizes = "small", "medium", "large"
+        self.colors = "red", "green", "blue"
 
     def get_store(self, store_id):
         with self._lock:
@@ -71,12 +80,28 @@ class Model:
 
         with self._lock:
             for item in self._items_by_id.values():
-                if item.product is None or item.product == product:
+                if product is None or item.product is product:
                     if size is None or item.size == size:
                         if color is None or item.color == color:
                             results.append(item.data())
 
         return results
+
+    def find_items_all_stores(self, product, size, color):
+        data = _requests.get(f"{store_all}/api/find-items").json()
+
+        # Special case for non-aggregated result used in testing
+        if isinstance(data, dict):
+            data = [data]
+
+        results = list()
+
+        # XXX Check for errors
+
+        for response in data:
+            results.extend(response["items"])
+
+        return results, data
 
 class Store:
     def __init__(self, model, name, id=None):
@@ -125,6 +150,7 @@ class ProductItem:
         self.product = product
         self.size = size
         self.color = color
+        self.store = None
 
         if self.id is None:
             self.id = _unique_id()
@@ -143,10 +169,11 @@ class ProductItem:
             "product_id": self.product.id,
             "size": self.size,
             "color": self.color,
+            "store_id": (None if self.store is None else self.store.id),
         }
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.product.id},{self.size},{self.color},{self.status})"
+        return f"{self.__class__.__name__}({self.id},{self.product.id},{self.size},{self.color})"
 
     # Store calls factory
     def make(self, store):
@@ -173,6 +200,6 @@ class ProductItem:
 
 def _unique_id():
     uuid_bytes = _uuid.uuid4().bytes
-    uuid_bytes = uuid_bytes[:2]
+    uuid_bytes = uuid_bytes[:4]
 
     return _binascii.hexlify(uuid_bytes).decode("utf-8")
