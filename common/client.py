@@ -29,22 +29,30 @@ _factory_any_host = os.environ["FACTORY_SERVICE_ANY_HOST"]
 _factory_any_port = int(os.environ.get("FACTORY_SERVICE_ANY_PORT", 8080))
 _factory_any_url = f"http://{_factory_any_host}:{_factory_any_port}"
 
+_log = logging.getLogger("client")
+
 class Client:
     def get_json(self, url, **params):
+        _log.info(f"Requesting {url}")
+
         response = _requests.get(url)
 
-        response.raise_for_status()
-
-        # XXX check for errors
+        try:
+            response.raise_for_status()
+        except _requests_exceptions.HTTPError as e:
+            _log.error(e)
 
         return response.json()
 
     def post_json(self, url, request_data):
+        _log.info(f"Requesting {url}")
+
         response = _requests.post(url, json=request_data)
 
-        response.raise_for_status()
-
-        # XXX check for errors
+        try:
+            response.raise_for_status()
+        except _requests_exceptions.HTTPError as e:
+            _log.error(e)
 
         return response.json()
 

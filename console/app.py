@@ -78,6 +78,10 @@ def scripts_generate_data():
     generate_data(model)
     return Response("OK\n", status=200, mimetype="text/plain")
 
+@app.route("/favicon.ico")
+def favicon():
+    return Response("I blame Microsoft for this bullshit\n", status=200, mimetype="text/plain")
+
 # @app.route("/make-item", methods=["POST"])
 # def make_item():
 #     kind = request.form["kind"]

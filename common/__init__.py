@@ -31,6 +31,14 @@ def create_app(module_name, id):
 
     app.logger.setLevel(logging.INFO)
 
+    formatter = logging.Formatter("%(threadName)-6.6s %(asctime)s %(levelname)-4.4s %(message)s")
+    handler = logging.StreamHandler()
+    logger = logging.getLogger("client")
+
+    handler.setFormatter(formatter)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(handler)
+
     # Defeat caching during development
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 
