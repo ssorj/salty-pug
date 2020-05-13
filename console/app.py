@@ -19,7 +19,7 @@
 
 from common import *
 
-from flask import render_template
+from flask import Markup, render_template
 
 app, model, client = create_app(__name__, "console")
 
@@ -31,15 +31,15 @@ def index():
 @app.route("/inventory/index.html")
 @app.route("/inventory/")
 def inventory_index():
-    return render_template("/inventory/index.html", inventory_table=inventory_table)
+    return render_template("/inventory/index.html", inventory_table=inventory_table, inventory_data_link=inventory_data_link)
 
 def inventory_table():
     out = list()
 
-    items, data = client.find_items(None, None, None)
-
     out.append("<table>");
     out.append("<tr><th>ID</th><th>Kind</th><th>Size</th><th>Color</th><th>Store</th></tr>");
+
+    items = client.find_items(None, None, None)
 
     for item in items:
         out.append("<tr>");
@@ -52,30 +52,31 @@ def inventory_table():
 
     out.append("</table>");
 
-    import pprint
-    out.append(f"<pre>{pprint.pformat(data)}</pre>");
-
     return Markup("".join(out))
+
+def inventory_data_link():
+    url = url_escape(client.find_items_url(None, None, None))
+    return Markup(f"<a href='/pretty-data?url={url}'>Data</a>")
 
 @app.route("/orders/index.html")
 @app.route("/orders/")
 def orders_index():
     return render_template("/orders/index.html")
 
-@app.route("/scripts/generate-inventory")
-def scripts_generate_inventory():
-    generate_inventory(model)
-    return Response(f"OK\n", status=200, mimetype="text/plain")
-
-@app.route("/scripts/pretty-data")
+@app.route("/pretty-data")
 def scripts_pretty_data():
     import pprint
-    import requests
 
     url = request.args["url"]
-    data = requests.get(url).json()
+    data = client.get_json(url)
+    pretty_data = pprint.pformat(data)
 
-    return Response(pprint.pformat(data), status=200, mimetype="text/plain")
+    return Response(pretty_data, status=200, mimetype="text/plain")
+
+@app.route("/scripts/generate-data")
+def scripts_generate_data():
+    generate_data(model)
+    return Response("OK\n", status=200, mimetype="text/plain")
 
 # @app.route("/make-item", methods=["POST"])
 # def make_item():

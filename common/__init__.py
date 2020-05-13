@@ -20,7 +20,8 @@
 from .client import *
 from .model import *
 
-from flask import Flask, Response, Markup, request, jsonify
+from flask import Flask, Response, request, jsonify
+from urllib.parse import quote_plus as url_escape
 
 import os
 import traceback as _traceback
@@ -38,6 +39,8 @@ def create_app(module_name, id):
 
         app.logger.error(e)
 
+        # XXX Stack trace
+
         return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
 
     app.register_error_handler(Exception, handle_error)
@@ -48,7 +51,7 @@ def check_error(response):
     if response["error"] is not None:
         raise Exception(response["error"])
 
-def generate_inventory(model):
+def generate_data(model):
     client = Client()
 
     import random

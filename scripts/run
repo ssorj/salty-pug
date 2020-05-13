@@ -53,10 +53,10 @@ try:
     with start_process(f"docker run {args} quay.io/skupper/salty-pug-store"):
         with start_process(f"docker run {args} quay.io/skupper/salty-pug-factory"):
             with start_process(f"docker run {args} quay.io/skupper/salty-pug-console"):
-                sleep(0.5)
+                sleep(1) # XXX readiness checks
 
                 with working_env(PYTHONPATH="."):
-                    call("scripts/generate-inventory")
+                    call("scripts/generate-data")
 
                 while True:
                     sleep(1)

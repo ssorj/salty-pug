@@ -30,8 +30,30 @@ _factory_any_port = int(os.environ.get("FACTORY_SERVICE_ANY_PORT", 8080))
 _factory_any_url = f"http://{_factory_any_host}:{_factory_any_port}"
 
 class Client:
+    def get_json(self, url, **params):
+        response = _requests.get(url)
+
+        response.raise_for_status()
+
+        # XXX check for errors
+
+        return response.json()
+
+    def post_json(self, url, request_data):
+        response = _requests.post(url, json=request_data)
+
+        response.raise_for_status()
+
+        # XXX check for errors
+
+        return response.json()
+
+    def find_items_url(self, product, size, color):
+        return f"{_store_all_url}/api/find-items"
+
     def find_items(self, product, size, color):
-        data = _requests.get(f"{_store_all_url}/api/find-items").json()
+        url = self.find_items_url(product, size, color)
+        data = _requests.get(url).json()
 
         # Special case for non-aggregated result used in testing
         if isinstance(data, dict):
@@ -44,23 +66,25 @@ class Client:
         for response in data:
             results.extend(response["content"]["items"])
 
-        return results, data # XXX
+        return results
 
     def make_item(self, item, store):
+        url = f"{_factory_any_url}/api/make-item"
+
         request_data = {
             "item": item.data(),
             "store_id": store.id,
         }
 
-        response = _requests.post(f"{_factory_any_url}/api/make-item", json=request_data)
+        return self.post_json(url, request_data)
 
     def stock_item(self, item, store):
+        host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", store.id)
+        port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
+        url = f"http://{host}:{port}/api/stock-item"
+
         request_data = {
             "item": item.data(),
         }
 
-        store_host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", store.id)
-        store_port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
-        store_url = f"http://{store_host}:{store_port}"
-
-        response = _requests.post(f"{store_url}/api/stock-item", json=request_data)
+        return self.post_json(url, request_data)
