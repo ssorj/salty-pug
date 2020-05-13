@@ -28,6 +28,7 @@ clean:
 	cd store && make clean
 	cd factory && make clean
 	cd console && make clean
+	rm -rf common/__pycache__
 	rm -rf scripts/__pycache__
 	rm -f README.html
 
