@@ -11,7 +11,7 @@ demo:
 	SKUPPER_DEMO=1 python3 scripts/test-minikube
 
 .phony: build
-build: clean
+build:
 	cd store && make build
 	cd factory && make build
 	cd console && make build

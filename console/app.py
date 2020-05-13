@@ -75,7 +75,7 @@ def scripts_pretty_data():
 
 @app.route("/scripts/generate-data")
 def scripts_generate_data():
-    generate_data(model)
+    generate_data()
     return Response("OK\n", status=200, mimetype="text/plain")
 
 @app.route("/favicon.ico")

@@ -31,13 +31,7 @@ def create_app(module_name, id):
 
     app.logger.setLevel(logging.INFO)
 
-    formatter = logging.Formatter("%(threadName)-6.6s %(asctime)s %(levelname)-4.4s %(message)s")
-    handler = logging.StreamHandler()
-    logger = logging.getLogger("client")
-
-    handler.setFormatter(formatter)
-    logger.setLevel(logging.INFO)
-    logger.addHandler(handler)
+    configure_logging()
 
     # Defeat caching during development
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
@@ -47,22 +41,35 @@ def create_app(module_name, id):
 
         app.logger.error(e)
 
-        # XXX Stack trace
-
-        return Response(f"Trouble! {e}\n", status=500, mimetype="text/plain")
+        return Response(f"Trouble! {e}\n\n{_traceback.format_exc()}", status=500, mimetype="text/plain")
 
     app.register_error_handler(Exception, handle_error)
 
     return app, Model(), Client()
 
+def configure_logging():
+    formatter = logging.Formatter("%(asctime)s %(levelname)-4.4s %(message)s")
+    handler = logging.StreamHandler()
+
+    handler.setFormatter(formatter)
+
+    for module in "client", "console", "store", "factory":
+        logger = logging.getLogger(module)
+
+        logger.setLevel(logging.INFO)
+        logger.addHandler(handler)
+
 def check_error(response):
     if response["error"] is not None:
         raise Exception(response["error"])
 
-def generate_data(model):
-    client = Client()
-
+def generate_data():
     import random
+
+    configure_logging()
+
+    model = Model()
+    client = Client()
 
     for i in range(20):
         store = random.choice(list(model._stores_by_id.values()))

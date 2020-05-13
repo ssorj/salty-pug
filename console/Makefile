@@ -18,5 +18,5 @@ clean:
 	rm -rf common
 	rm -rf __pycache__
 
-common: ../common
+common: ../common ../common/*
 	cp -a $< $@
