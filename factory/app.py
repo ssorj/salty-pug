@@ -21,17 +21,14 @@ from common import *
 
 factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 
-host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
-port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
-
-app, model = create_app(__name__, factory_id)
+app, model, client = create_app(__name__, factory_id)
 
 @app.route("/api/make-item", methods=["POST"])
 def make_item():
     item = ProductItem.load(model, request.json["item"])
     store = model.get_store(request.json["store_id"])
 
-    item.stock(store)
+    client.stock_item(item, store)
 
     return jsonify({
         "error": None,
@@ -40,4 +37,7 @@ def make_item():
     })
 
 if __name__ == "__main__":
+    host = os.environ.get("FACTORY_SERVICE_HOST", "0.0.0.0")
+    port = int(os.environ.get("FACTORY_SERVICE_PORT", 8080))
+
     app.run(host=host, port=port)

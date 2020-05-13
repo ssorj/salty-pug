@@ -1,7 +1,7 @@
 IMAGE := quay.io/skupper/salty-pug-factory
 
 .PHONY: build
-build: common.py model.py
+build: common
 	docker build -t ${IMAGE} .
 
 .PHONY: run
@@ -15,11 +15,8 @@ push: build
 
 .PHONY: clean
 clean:
-	rm model.py
-	rm common.py
-	rm -rf __pycache__/
+	rm -rf common
+	rm -rf __pycache__
 
-../common/%.py: ;
-
-%.py: ../common/%.py
-	cp $< $@
+common: ../common
+	cp -a $< $@

@@ -17,9 +17,12 @@
 # under the License.
 #
 
-from model import *
+from .client import *
+from .model import *
+
 from flask import Flask, Response, Markup, request, jsonify
 
+import os
 import traceback as _traceback
 
 def create_app(module_name, id):
@@ -39,13 +42,15 @@ def create_app(module_name, id):
 
     app.register_error_handler(Exception, handle_error)
 
-    return app, Model()
+    return app, Model(), Client()
 
 def check_error(response):
     if response["error"] is not None:
         raise Exception(response["error"])
 
 def generate_inventory(model):
+    client = Client()
+
     import random
 
     for i in range(20):
@@ -56,4 +61,4 @@ def generate_inventory(model):
 
         item = ProductItem(model, product, size, color)
 
-        item.make(store)
+        client.make_item(item, store)

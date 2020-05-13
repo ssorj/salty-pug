@@ -18,28 +18,15 @@
 #
 
 from common import *
+
 from flask import render_template
 
-host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
-port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
-
-store_host_all = os.environ["STORE_SERVICE_HOST_ALL"]
-store_port_all = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
-store_all = f"http://{store_host_all}:{store_port_all}"
-
-factory_host_any = os.environ["FACTORY_SERVICE_HOST_ANY"]
-factory_port_any = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
-factory_any = f"http://{factory_host_any}:{factory_port_any}"
-
-app, model = create_app(__name__, "console")
+app, model, client = create_app(__name__, "console")
 
 @app.route("/index.html")
 @app.route("/")
 def index():
-    return render_template("index.html", func=func)
-
-def func():
-    return "Hello"
+    return render_template("index.html")
 
 @app.route("/inventory/index.html")
 @app.route("/inventory/")
@@ -49,7 +36,7 @@ def inventory_index():
 def inventory_table():
     out = list()
 
-    items, data = model.find_items_all_stores(None, None, None)
+    items, data = client.find_items(None, None, None)
 
     out.append("<table>");
     out.append("<tr><th>ID</th><th>Kind</th><th>Size</th><th>Color</th><th>Store</th></tr>");
@@ -73,7 +60,7 @@ def inventory_table():
 @app.route("/orders/index.html")
 @app.route("/orders/")
 def orders_index():
-    return render_template("/orders/index.html", func=func)
+    return render_template("/orders/index.html")
 
 @app.route("/scripts/generate-inventory")
 def scripts_generate_inventory():
@@ -108,4 +95,7 @@ def scripts_pretty_data():
 #                            response_data=response_data)
 
 if __name__ == "__main__":
+    host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
+    port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
+
     app.run(host=host, port=port)

@@ -18,18 +18,10 @@
 #
 
 import logging
-import os
 
 import binascii as _binascii
-import requests as _requests
 import threading as _threading
 import uuid as _uuid
-
-# XXX
-
-store_host_all = os.environ["STORE_SERVICE_HOST_ALL"]
-store_port_all = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
-store_all = f"http://{store_host_all}:{store_port_all}"
 
 class Model:
     def __init__(self):
@@ -86,22 +78,6 @@ class Model:
                             results.append(item.data())
 
         return results
-
-    def find_items_all_stores(self, product, size, color):
-        data = _requests.get(f"{store_all}/api/find-items").json()
-
-        # Special case for non-aggregated result used in testing
-        if isinstance(data, dict):
-            data = [data]
-
-        results = list()
-
-        # XXX Check for errors
-
-        for response in data:
-            results.extend(response["content"]["items"])
-
-        return results, data
 
 class Store:
     def __init__(self, model, name, id=None):
@@ -174,29 +150,6 @@ class ProductItem:
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.id},{self.product.id},{self.size},{self.color})"
-
-    # Store calls factory
-    def make(self, store):
-        factory_host = os.environ["FACTORY_SERVICE_HOST_ANY"]
-        factory_port = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
-
-        request_data = {
-            "item": self.data(),
-            "store_id": store.id,
-        }
-
-        response = _requests.post(f"http://{factory_host}:{factory_port}/api/make-item", json=request_data)
-
-    # Factory calls store
-    def stock(self, store):
-        request_data = {
-            "item": self.data(),
-        }
-
-        store_host = os.environ.get("STORE_SERVICE_HOST_OVERRIDE", store.id)
-        store_port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
-
-        response = _requests.post(f"http://{store_host}:{store_port}/api/stock-item", json=request_data)
 
 def _unique_id():
     uuid_bytes = _uuid.uuid4().bytes

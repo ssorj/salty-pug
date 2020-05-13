@@ -1,1 +1,0 @@
-# Salty Pug truck

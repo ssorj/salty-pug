@@ -21,10 +21,7 @@ from common import *
 
 store_id = os.environ.get("STORE_SERVICE_STORE_ID")
 
-host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
-port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
-
-app, model = create_app(__name__, store_id)
+app, model, client = create_app(__name__, store_id)
 
 @app.route("/api/find-items")
 def find_items():
@@ -51,4 +48,7 @@ def stock_item():
     })
 
 if __name__ == "__main__":
+    host = os.environ.get("STORE_SERVICE_HOST", "0.0.0.0")
+    port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
+
     app.run(host=host, port=port)

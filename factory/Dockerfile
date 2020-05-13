@@ -22,6 +22,7 @@ FROM registry.fedoraproject.org/fedora-minimal
 RUN microdnf install python3-flask python3-requests && microdnf clean all
 
 COPY app.py /app/app.py
+COPY common /app/common
 ENV HOME=/app
 
 EXPOSE 8080
