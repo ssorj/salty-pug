@@ -16,7 +16,7 @@ build:
 	cd factory && make build
 	cd console && make build
 
-# Prerequisite: podman login quay.io
+# Prerequisite: docker login quay.io
 .PHONY: push
 push: build
 	cd store && make push

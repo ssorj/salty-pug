@@ -21,12 +21,12 @@ import logging
 import os
 import requests as _requests
 
-_store_all_host = os.environ["STORE_SERVICE_HOST_ALL"]
-_store_all_port = int(os.environ.get("STORE_SERVICE_PORT_ALL", 8080))
+_store_all_host = os.environ["STORE_SERVICE_ALL_HOST"]
+_store_all_port = int(os.environ.get("STORE_SERVICE_ALL_PORT", 8080))
 _store_all_url = f"http://{_store_all_host}:{_store_all_port}"
 
-_factory_any_host = os.environ["FACTORY_SERVICE_HOST_ANY"]
-_factory_any_port = int(os.environ.get("FACTORY_SERVICE_PORT_ANY", 8080))
+_factory_any_host = os.environ["FACTORY_SERVICE_ANY_HOST"]
+_factory_any_port = int(os.environ.get("FACTORY_SERVICE_ANY_PORT", 8080))
 _factory_any_url = f"http://{_factory_any_host}:{_factory_any_port}"
 
 class Client:

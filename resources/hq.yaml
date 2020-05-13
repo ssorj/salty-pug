@@ -24,9 +24,7 @@ spec:
       - image: quay.io/skupper/salty-pug-console
         name: salty-pug-console
         env:
-        - name: STORE_SERVICE_HOST_ALL
+        - name: STORE_SERVICE_ALL_HOST
           value: store-all
-        - name: FACTORY_SERVICE_HOST_ANY
+        - name: FACTORY_SERVICE_ANY_HOST
           value: factory-any
-        - name: FACTORY_SERVICE_HOST_ALL
-          value: factory-all
