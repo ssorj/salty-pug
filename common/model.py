@@ -23,6 +23,8 @@ import binascii as _binascii
 import threading as _threading
 import uuid as _uuid
 
+_log = logging.getLogger("model")
+
 class Model:
     def __init__(self):
         self._lock = _threading.Lock()
@@ -64,10 +66,14 @@ class Model:
             return self._items_by_id.get(item_id)
 
     def add_item(self, item):
+        _log.info(f"Adding {item}")
+
         with self._lock:
             self._items_by_id[item.id] = item
 
     def find_items(self, product, size, color):
+        _log.info(f"Finding items ({product}, {size}, {color})")
+
         results = list()
 
         with self._lock:
