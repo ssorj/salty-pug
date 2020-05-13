@@ -59,7 +59,7 @@ class Client:
             "item": item.data(),
         }
 
-        store_host = os.environ.get("STORE_SERVICE_HOST_OVERRIDE", store.id)
+        store_host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", store.id)
         store_port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
         store_url = f"http://{store_host}:{store_port}"
 

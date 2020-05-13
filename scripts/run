@@ -4,32 +4,57 @@ import requests
 
 from plano import *
 
-ENV["STORE_SERVICE_STORE_ID"] = store_id = "store-1"
+store_id = "store-1"
+store_host = "localhost"
+store_port = str(get_random_port())
 
-ENV["STORE_SERVICE_HOST"] = store_host = "localhost"
-ENV["STORE_SERVICE_PORT"] = store_port = str(get_random_port())
+factory_id = "factory-1"
+factory_host = "localhost"
+factory_port = str(get_random_port())
 
-# Used for testing outside of Kubernetes
-ENV["STORE_SERVICE_HOST_OVERRIDE"] = store_host
+console_host = "localhost"
+console_port = str(8080)
 
+ENV["STORE_SERVICE_STORE_ID"] = store_id
+ENV["STORE_SERVICE_STORE_ID_OVERRIDE"] = store_host
+ENV["STORE_SERVICE_HOST"] = store_host
+ENV["STORE_SERVICE_PORT"] = store_port
 ENV["STORE_SERVICE_ALL_HOST"] = store_host
 ENV["STORE_SERVICE_ALL_PORT"] = store_port
 
-ENV["FACTORY_SERVICE_FACTORY_ID"] = factory_id = "factory-1"
-
-ENV["FACTORY_SERVICE_HOST"] = factory_host = "localhost"
-ENV["FACTORY_SERVICE_PORT"] = factory_port = str(get_random_port())
-
+ENV["FACTORY_SERVICE_FACTORY_ID"] = factory_id
+ENV["FACTORY_SERVICE_HOST"] = factory_host
+ENV["FACTORY_SERVICE_PORT"] = factory_port
 ENV["FACTORY_SERVICE_ANY_HOST"] = factory_host
 ENV["FACTORY_SERVICE_ANY_PORT"] = factory_port
 
-ENV["CONSOLE_SERVICE_HOST"] = console_host = "localhost"
-ENV["CONSOLE_SERVICE_PORT"] = console_port = str(8080)
+ENV["CONSOLE_SERVICE_HOST"] = console_host
+ENV["CONSOLE_SERVICE_PORT"] = console_port
+
+args = {
+    "--rm",
+    "--network host",
+    "-e STORE_SERVICE_STORE_ID",
+    "-e STORE_SERVICE_STORE_ID_OVERRIDE",
+    "-e STORE_SERVICE_HOST",
+    "-e STORE_SERVICE_PORT",
+    "-e STORE_SERVICE_ALL_HOST",
+    "-e STORE_SERVICE_ALL_PORT",
+    "-e FACTORY_SERVICE_FACTORY_ID",
+    "-e FACTORY_SERVICE_HOST",
+    "-e FACTORY_SERVICE_PORT",
+    "-e FACTORY_SERVICE_ANY_HOST",
+    "-e FACTORY_SERVICE_ANY_PORT",
+    "-e CONSOLE_SERVICE_HOST",
+    "-e CONSOLE_SERVICE_PORT",
+}
+
+args = " ".join(args)
 
 try:
-    with start_process("python3 store/app.py") as store:
-        with start_process("python3 factory/app.py") as factory:
-            with start_process("python3 console/app.py") as console:
+    with start_process(f"docker run {args} quay.io/skupper/salty-pug-store"):
+        with start_process(f"docker run {args} quay.io/skupper/salty-pug-factory"):
+            with start_process(f"docker run {args} quay.io/skupper/salty-pug-console"):
                 sleep(0.5)
 
                 with working_env(PYTHONPATH="."):

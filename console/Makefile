@@ -4,9 +4,9 @@ IMAGE := quay.io/skupper/salty-pug-console
 build: common
 	docker build -t ${IMAGE} .
 
-.PHONY: run
-run: build
-	docker run --rm -p 8080:8080 ${IMAGE}
+# .PHONY: run
+# run: build
+# 	docker run --rm -p 8080:8080 ${IMAGE}
 
 # Prerequisite: docker login quay.io
 .PHONY: push
