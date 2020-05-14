@@ -37,17 +37,18 @@ def inventory_table():
     out = list()
 
     out.append("<table>");
-    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th></tr>");
+    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th><th>Made at</th></tr>");
 
-    items = client.find_items()
+    results = client.find_items()
 
-    for item in items:
+    for result in results:
         out.append("<tr>");
-        out.append(f"<td>{item['id']}</td>");
-        out.append(f"<td>{item['product_id']}</td>");
-        out.append(f"<td>{item['size']}</td>");
-        out.append(f"<td>{item['color']}</td>");
-        out.append(f"<td>{item.get('store_id')}</td>");
+        out.append(f"<td>{result['id']}</td>");
+        out.append(f"<td>{result['product_id']}</td>");
+        out.append(f"<td>{result['size']}</td>");
+        out.append(f"<td>{result['color']}</td>");
+        out.append(f"<td>{result['store_id']}</td>");
+        out.append(f"<td>{result['factory_id']}</td>");
         out.append("</tr>");
 
     out.append("</table>");
@@ -67,17 +68,19 @@ def orders_table():
     out = list()
 
     out.append("<table>");
-    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th></tr>");
+    out.append("<tr><th>ID</th><th>Status</th><th>Product</th><th>Size</th><th>Color</th><th>Factory</th><th>Deliver to</th></tr>");
 
-    orders = client.find_orders()
+    results = client.find_orders()
 
-    for order in orders:
+    for result in results:
         out.append("<tr>");
-        out.append(f"<td>{order['id']}</td>");
-        out.append(f"<td>{order['product_id']}</td>");
-        out.append(f"<td>{order['size']}</td>");
-        out.append(f"<td>{order['color']}</td>");
-        out.append(f"<td>{order.get('store_id')}</td>");
+        out.append(f"<td>{result['id']}</td>");
+        out.append(f"<td>{result['status']}</td>");
+        out.append(f"<td>{result['product_id']}</td>");
+        out.append(f"<td>{result['size']}</td>");
+        out.append(f"<td>{result['color']}</td>");
+        out.append(f"<td>{result['factory_id']}</td>");
+        out.append(f"<td>{result['store_id']}</td>");
         out.append("</tr>");
 
     out.append("</table>");

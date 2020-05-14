@@ -39,16 +39,19 @@ def find_orders():
 @app.route("/api/order-item", methods=["POST"])
 def order_item():
     order = Order.load(model, request.json["order"])
+    factory = model.get_factory(factory_id)
 
+    order.factory = factory
     model.add_order(order)
 
-    item = Item(model, order.product, order.size, order.color)
+    item = Item(model, order.product, order.store, order.factory, order.size, order.color)
 
-    client.stock_item(order.store, item)
+    client.stock_item(item)
+
+    order.status = "fulfilled"
 
     return jsonify({
         "error": None,
-        "factory_id": factory_id,
         "item_id": item.id,
     })
 

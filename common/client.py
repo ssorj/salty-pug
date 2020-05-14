@@ -128,8 +128,8 @@ class Client:
 
         return self.post_json(url, data)
 
-    def stock_item(self, store, item):
-        host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", store.id)
+    def stock_item(self, item):
+        host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", item.store.id)
         port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
         url = f"http://{host}:{port}/api/stock-item"
 
