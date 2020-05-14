@@ -23,6 +23,19 @@ factory_id = os.environ.get("FACTORY_SERVICE_FACTORY_ID")
 
 app, model, client = create_app(__name__, factory_id)
 
+@app.route("/api/find-orders")
+def find_orders():
+    product = model.get_product(request.args.get("product_id"))
+    size = request.args.get("size")
+    color = request.args.get("color")
+
+    results = model.find_orders(product, size, color)
+
+    return jsonify({
+        "error": None,
+        "results": results,
+    })
+
 @app.route("/api/order-item", methods=["POST"])
 def order_item():
     order = Order.load(model, request.json["order"])

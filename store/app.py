@@ -33,7 +33,7 @@ def find_items():
 
     return jsonify({
         "error": None,
-        "items": results,
+        "results": results,
     })
 
 @app.route("/api/stock-item", methods=["POST"])

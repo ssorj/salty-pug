@@ -13,7 +13,7 @@ Response body:
 
       {
           "error": null,
-          "items": [
+          "results": [
               { /* Item fields */ },
               { /* Item fields */ },
               { /* Item fields */ }

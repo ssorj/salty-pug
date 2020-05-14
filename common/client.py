@@ -70,10 +70,10 @@ class Client:
             if error is not None:
                 _log.warning(f"Error in aggregated response: {error}")
 
-    def find_items_url(self, product, size, color):
+    def find_items_url(self, product=None, size=None, color=None):
         return f"{_store_all_url}/api/find-items"
 
-    def find_items(self, product, size, color):
+    def find_items(self, product=None, size=None, color=None):
         url = self.find_items_url(product, size, color)
         data = _requests.get(url).json()
 
@@ -86,14 +86,14 @@ class Client:
         results = list()
 
         for response in data:
-            results.extend(response["content"]["items"])
+            results.extend(response["content"]["results"])
 
         return results
 
-    def find_orders_url(self, product, size, color):
+    def find_orders_url(self, product=None, size=None, color=None):
         return f"{_factory_all_url}/api/find-orders"
 
-    def find_orders(self, product, size, color):
+    def find_orders(self, product=None, size=None, color=None):
         url = self.find_orders_url(product, size, color)
         data = _requests.get(url).json()
 
@@ -106,7 +106,7 @@ class Client:
         results = list()
 
         for response in data:
-            results.extend(response["content"]["orders"])
+            results.extend(response["content"]["results"])
 
         return results
 

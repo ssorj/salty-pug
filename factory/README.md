@@ -1,28 +1,28 @@
 # Salty Pug factory
 
-## Finding items in factory inventory
+<!-- ## Finding items in factory inventory -->
 
-    GET /api/find-items?kind=<kind>&color=<color>&size=<size>
+<!--     GET /api/find-items?kind=<kind>&color=<color>&size=<size> -->
 
-Addresses:
+<!-- Addresses: -->
 
-    factory-<factory-id>
-    factory-all (multicast)
+<!--     factory-<factory-id> -->
+<!--     factory-all (multicast) -->
 
-Response body:
+<!-- Response body: -->
 
-      {
-          "error": null,
-          "items": [
-              { /* Item fields */ },
-              { /* Item fields */ },
-              { /* Item fields */ }
-          ]
-      }
+<!--       { -->
+<!--           "error": null, -->
+<!--           "results": [ -->
+<!--               { /* Item fields */ }, -->
+<!--               { /* Item fields */ }, -->
+<!--               { /* Item fields */ } -->
+<!--           ] -->
+<!--       } -->
 
-## Making a new item
+## Ordering a new item
 
-    POST /api/make-item
+    POST /api/order-item
 
 Addresses:
 
@@ -32,8 +32,8 @@ Addresses:
 Request body:
 
     {
-        "item": {
-            "kind": "<kind>",
+        "order": {
+            "product_id": "<product-id>",
             "color": "<color>",
             "size": "<size>"
         }
@@ -54,20 +54,20 @@ When the process of making the item is complete, the factory updates
 its status to "made".  You can then use `/api/ship-item` to send it to
 a store.
 
-## Checking the status of an item
+<!-- ## Checking the status of an item -->
 
-    GET /api/check-item-status?id=<item-id>
+<!--     GET /api/check-item-status?id=<item-id> -->
 
-Addresses:
+<!-- Addresses: -->
 
-    factory-<factory-id>
+<!--     factory-<factory-id> -->
 
-Response body:
+<!-- Response body: -->
 
-    {
-        "error": null,
-        "status": "<description>" // "making" or "made"
-    }
+<!--     { -->
+<!--         "error": null, -->
+<!--         "status": "<description>" // "making" or "made" -->
+<!--     } -->
 
 ## Shipping an item to a store
 

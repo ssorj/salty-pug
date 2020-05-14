@@ -37,9 +37,9 @@ def inventory_table():
     out = list()
 
     out.append("<table>");
-    out.append("<tr><th>ID</th><th>Kind</th><th>Size</th><th>Color</th><th>Store</th></tr>");
+    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th></tr>");
 
-    items = client.find_items(None, None, None)
+    items = client.find_items()
 
     for item in items:
         out.append("<tr>");
@@ -55,13 +55,38 @@ def inventory_table():
     return Markup("".join(out))
 
 def inventory_data_link():
-    url = url_escape(client.find_items_url(None, None, None))
+    url = url_escape(client.find_items_url())
     return Markup(f"<a href='/pretty-data?url={url}'>Data</a>")
 
 @app.route("/orders/index.html")
 @app.route("/orders/")
 def orders_index():
-    return render_template("/orders/index.html")
+    return render_template("/orders/index.html", orders_table=orders_table, orders_data_link=orders_data_link)
+
+def orders_table():
+    out = list()
+
+    out.append("<table>");
+    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th></tr>");
+
+    orders = client.find_orders()
+
+    for order in orders:
+        out.append("<tr>");
+        out.append(f"<td>{order['id']}</td>");
+        out.append(f"<td>{order['product_id']}</td>");
+        out.append(f"<td>{order['size']}</td>");
+        out.append(f"<td>{order['color']}</td>");
+        out.append(f"<td>{order.get('store_id')}</td>");
+        out.append("</tr>");
+
+    out.append("</table>");
+
+    return Markup("".join(out))
+
+def orders_data_link():
+    url = url_escape(client.find_orders_url())
+    return Markup(f"<a href='/pretty-data?url={url}'>Data</a>")
 
 @app.route("/pretty-data")
 def scripts_pretty_data():
