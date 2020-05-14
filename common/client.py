@@ -20,6 +20,7 @@
 import logging
 import os
 import requests as _requests
+import requests.exceptions as _requests_exceptions
 
 _store_all_host = os.environ["STORE_SERVICE_ALL_HOST"]
 _store_all_port = int(os.environ.get("STORE_SERVICE_ALL_PORT", 8080))
@@ -40,7 +41,8 @@ class Client:
         try:
             response.raise_for_status()
         except _requests_exceptions.HTTPError as e:
-            _log.error(e)
+            _log.exception(e)
+            raise
 
         return response.json()
 
@@ -52,7 +54,8 @@ class Client:
         try:
             response.raise_for_status()
         except _requests_exceptions.HTTPError as e:
-            _log.error(e)
+            _log.exception(e)
+            raise
 
         return response.json()
 
