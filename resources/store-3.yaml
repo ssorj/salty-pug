@@ -28,5 +28,7 @@ spec:
           value: store-3
         - name: STORE_SERVICE_HOST_ALL
           value: store-all
+        - name: FACTORY_SERVICE_HOST_ALL
+          value: factory-all
         - name: FACTORY_SERVICE_HOST_ANY
           value: factory-any

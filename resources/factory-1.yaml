@@ -26,6 +26,8 @@ spec:
         env:
         - name: FACTORY_SERVICE_FACTORY_ID
           value: factory-1
+        - name: FACTORY_SERVICE_ALL_HOST
+          value: factory-all
         - name: FACTORY_SERVICE_ANY_HOST
           value: factory-any
         - name: STORE_SERVICE_ALL_HOST

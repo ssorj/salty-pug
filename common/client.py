@@ -26,6 +26,10 @@ _store_all_host = os.environ["STORE_SERVICE_ALL_HOST"]
 _store_all_port = int(os.environ.get("STORE_SERVICE_ALL_PORT", 8080))
 _store_all_url = f"http://{_store_all_host}:{_store_all_port}"
 
+_factory_all_host = os.environ["FACTORY_SERVICE_ALL_HOST"]
+_factory_all_port = int(os.environ.get("FACTORY_SERVICE_ALL_PORT", 8080))
+_factory_all_url = f"http://{_factory_all_host}:{_factory_all_port}"
+
 _factory_any_host = os.environ["FACTORY_SERVICE_ANY_HOST"]
 _factory_any_port = int(os.environ.get("FACTORY_SERVICE_ANY_PORT", 8080))
 _factory_any_url = f"http://{_factory_any_host}:{_factory_any_port}"
@@ -59,6 +63,13 @@ class Client:
 
         return response.json()
 
+    def check_errors(self, data):
+        for response in data:
+            error = response["content"]["error"]
+
+            if error is not None:
+                _log.warning(f"Error in aggregated response: {error}")
+
     def find_items_url(self, product, size, color):
         return f"{_store_all_url}/api/find-items"
 
@@ -66,20 +77,38 @@ class Client:
         url = self.find_items_url(product, size, color)
         data = _requests.get(url).json()
 
-        # Special case for non-aggregated result used in testing
+        # Special case for testing
         if isinstance(data, dict):
             data = [{"content": data}]
 
-        results = list()
+        self.check_errors(data)
 
-        # XXX Check for errors
+        results = list()
 
         for response in data:
             results.extend(response["content"]["items"])
 
         return results
 
-    # find_orders XXX
+    def find_orders_url(self, product, size, color):
+        return f"{_factory_all_url}/api/find-orders"
+
+    def find_orders(self, product, size, color):
+        url = self.find_orders_url(product, size, color)
+        data = _requests.get(url).json()
+
+        # Special case for testing
+        if isinstance(data, dict):
+            data = [{"content": data}]
+
+        self.check_errors(data)
+
+        results = list()
+
+        for response in data:
+            results.extend(response["content"]["orders"])
+
+        return results
 
     def order_item(self, order):
         url = f"{_factory_any_url}/api/order-item"

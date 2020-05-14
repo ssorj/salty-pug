@@ -72,7 +72,7 @@ class Model:
         with self._lock:
             self._items_by_id[item.id] = item
 
-    def find_items(self, product, size, color):
+    def find_items(self, product=None, size=None, color=None):
         _log.info(f"Finding items ({product}, {size}, {color})")
 
         results = list()
@@ -96,14 +96,17 @@ class Model:
         with self._lock:
             self._orders_by_id[order.id] = order
 
-    def find_orders(self):
-        _log.info(f"Finding orders")
+    def find_orders(self, product=None, size=None, color=None):
+        _log.info(f"Finding roders ({product}, {size}, {color})")
 
         results = list()
 
         with self._lock:
             for order in self._orders_by_id.values():
-                results.append(order.data())
+                if product is None or order.product is product:
+                    if size is None or order.size == size:
+                        if color is None or order.color == color:
+                            results.append(order.data())
 
         return results
 
