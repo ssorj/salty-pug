@@ -22,7 +22,9 @@ footer > div {
 }
 
 header a,
-footer a {
+header a:visited,
+footer a,
+footer a:visited {
     color: var(--black);
 }
 
@@ -35,6 +37,7 @@ footer {
 }
 
 a#logotype {
+    color: inherit;
     font-weight: 700;
 }
 
@@ -50,9 +53,10 @@ nav#top-nav > a {
 }
 
 nav#top-nav > a.selected {
-    color: var(--black);
+    color: inherit;
     font-weight: 600;
 }
 
 nav#global-nav {
+    color: inherit;
 }

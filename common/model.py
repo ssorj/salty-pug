@@ -197,7 +197,7 @@ class Item:
         }
 
 class Order:
-    def __init__(self, model, product, store, size, color, id=None, factory=None, status=None):
+    def __init__(self, model, product, store, size, color, id=None, factory=None, status=None, item=None):
         assert product in model._products_by_id.values()
         assert store in model._stores_by_id.values()
         assert factory is None or factory in model._factories_by_id.values()
@@ -213,19 +213,22 @@ class Order:
         self.color = color
         self.status = status
 
+        self.item = item
+
         if self.id is None:
             self.id = _unique_id()
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.product},{self.store},{self.factory},{self.size},{self.color},{self.status})"
+        return f"{self.__class__.__name__}({self.id},{self.product},{self.store},{self.factory},{self.size},{self.color},{self.status},{self.item})"
 
     @staticmethod
     def load(model, data):
         product = model.get_product(data["product_id"])
         store = model.get_store(data["store_id"])
         factory = model.get_factory(data.get("factory_id"))
+        item = model.get_factory(data.get("item_id"))
 
-        return Order(model, product, store, data["size"], data["color"], id=data["id"], factory=factory, status=data["status"])
+        return Order(model, product, store, data["size"], data["color"], id=data["id"], factory=factory, status=data["status"], item=item)
 
     def data(self):
         return {
@@ -236,6 +239,7 @@ class Order:
             "size": self.size,
             "color": self.color,
             "status": self.status,
+            "item_id": (None if self.item is None else self.item.id),
         }
 
 def _unique_id():

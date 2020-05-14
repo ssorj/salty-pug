@@ -1,14 +1,17 @@
-<html>
-  <head>
-    <title>Salty Pug console</title>
-    <link rel="icon" href="data:,">
-  </head>
-  <body>
-    <h1>Result</h1>
-    <p><a href="/index.html">Return home</a></p>
-    <h2>Request</h2>
-    <pre>{{request_data}}</pre>
-    <h2>Response</h2>
-    <pre>{{response_data}}</pre>
-  </body>
-</html>
+{% extends "template.html" %}
+
+{% block content %}
+
+<h1>Order created</h1>
+
+<p><a href="/orders/index.html">Return to orders</a></p>
+
+<h2>Request data</h2>
+
+<pre>{{request_data}}</pre>
+
+<h2>Response data</h2>
+
+<pre>{{response_data}}</pre>
+
+{% endblock %}

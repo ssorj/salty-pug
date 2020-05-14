@@ -40,8 +40,18 @@ body {
 
 a {
     text-decoration: none;
+    color: rgb(0, 0, 238); /* XXX */
+}
+
+a:visited {
+    color: inherit;
+    color: rgb(0, 0, 238); /* XXX */
 }
 
 pre {
     font-family: monospace;
+}
+
+h2 {
+    font-size: 1.15em;
 }

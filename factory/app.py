@@ -44,15 +44,15 @@ def order_item():
     order.factory = factory
     model.add_order(order)
 
-    item = Item(model, order.product, order.store, order.factory, order.size, order.color)
+    order.item = Item(model, order.product, order.store, order.factory, order.size, order.color)
 
-    client.stock_item(item)
+    client.stock_item(order.item)
 
     order.status = "fulfilled"
 
     return jsonify({
         "error": None,
-        "item_id": item.id,
+        "order": order.data(),
     })
 
 if __name__ == "__main__":

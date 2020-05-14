@@ -37,7 +37,7 @@ def inventory_table():
     out = list()
 
     out.append("<table>");
-    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th><th>Made at</th></tr>");
+    out.append("<tr><th>ID</th><th>Product</th><th>Size</th><th>Color</th><th>Store</th><th>Origin</th></tr>");
 
     results = client.find_items()
 
@@ -64,11 +64,31 @@ def inventory_data_link():
 def orders_index():
     return render_template("/orders/index.html", orders_table=orders_table, orders_data_link=orders_data_link)
 
+@app.route("/orders/create.html")
+def orders_create():
+    return render_template("/orders/create.html")
+
+@app.route("/orders/create-result.html", methods=["POST"])
+def orders_create_result():
+    product = model.get_product(request.form["product_id"])
+    store = model.get_store(request.form["store_id"])
+    size = request.form["size"]
+    color = request.form["color"]
+
+    order = Order(model, product, store, size, color)
+
+    request_data, response_data = client.order_item(order)
+
+    import pprint
+    request_data, response_data = pprint.pformat(request_data), pprint.pformat(response_data)
+
+    return render_template("/orders/create-result.html", request_data=request_data, response_data=response_data)
+
 def orders_table():
     out = list()
 
     out.append("<table>");
-    out.append("<tr><th>ID</th><th>Status</th><th>Product</th><th>Size</th><th>Color</th><th>Factory</th><th>Deliver to</th></tr>");
+    out.append("<tr><th>ID</th><th>Status</th><th>Product</th><th>Size</th><th>Color</th><th>Factory</th><th>Destination</th></tr>");
 
     results = client.find_orders()
 
@@ -110,25 +130,8 @@ def scripts_generate_data():
 def favicon():
     return Response("I blame Microsoft for this bullshit\n", status=200, mimetype="text/plain")
 
-# @app.route("/make-item", methods=["POST"])
-# def make_item():
-#     kind = request.form["kind"]
-#     size = request.form["size"]
-#     color = request.form["color"]
-
-#     request_data, response_data = _make_item(kind, size, color)
-
-#     check_error(response_data)
-
-#     request_data = pprint.pformat(request_data)
-#     response_data = pprint.pformat(response_data)
-
-#     return render_template("result.html",
-#                            request_data=request_data,
-#                            response_data=response_data)
-
 if __name__ == "__main__":
     host = os.environ.get("CONSOLE_SERVICE_HOST", "0.0.0.0")
     port = int(os.environ.get("CONSOLE_SERVICE_PORT", 8080))
 
-    app.run(host=host, port=port)
+    app.run(host=host, port=port, debug=True)

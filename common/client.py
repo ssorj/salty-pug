@@ -122,19 +122,23 @@ class Client:
     def order_item(self, order):
         url = f"{_factory_any_url}/api/order-item"
 
-        data = {
+        request_data = {
             "order": order.data(),
         }
 
-        return self.post_json(url, data)
+        response_data = self.post_json(url, request_data)
+
+        return request_data, response_data
 
     def stock_item(self, item):
         host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", item.store.id)
         port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
         url = f"http://{host}:{port}/api/stock-item"
 
-        data = {
+        request_data = {
             "item": item.data(),
         }
 
-        return self.post_json(url, data)
+        response_data = self.post_json(url, request_data)
+
+        return request_data, response_data

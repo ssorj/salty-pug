@@ -1,7 +1,12 @@
 @import url("/static/general.css");
 @import url("/static/layout.css");
 @import url("/static/tables.css");
+@import url("/static/forms.css");
 
 pre {
     font-size: 0.7em;
+}
+
+button {
+    margin-top: 1em !important;
 }

@@ -72,8 +72,8 @@ def generate_data():
     client = Client()
 
     for i in range(20):
-        store = random.choice(list(model._stores_by_id.values()))
         product = random.choice(list(model._products_by_id.values()))
+        store = random.choice(list(model._stores_by_id.values()))
         size = random.choice(model.sizes)
         color = random.choice(model.colors)
 
