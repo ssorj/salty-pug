@@ -25,7 +25,7 @@ app, model, client = create_app(__name__, factory_id)
 
 @app.route("/api/make-item", methods=["POST"])
 def make_item():
-    item = ProductItem.load(model, request.json["item"])
+    item = Item.load(model, request.json["item"])
     store = model.get_store(request.json["store_id"])
 
     client.stock_item(item, store)

@@ -38,7 +38,7 @@ def find_items():
 
 @app.route("/api/stock-item", methods=["POST"])
 def stock_item():
-    item = ProductItem.load(model, request.json["item"])
+    item = Item.load(model, request.json["item"])
     item.store = model.get_store(store_id)
 
     model.add_item(item)

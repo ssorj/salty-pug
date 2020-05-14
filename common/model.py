@@ -33,21 +33,22 @@ class Model:
         self._factories_by_id = dict()
         self._products_by_id = dict()
         self._items_by_id = dict()
-
-        self.store_1 = Store(self, "Store 1", id="store-1")
-        self.store_2 = Store(self, "Store 2", id="store-2")
-        self.store_3 = Store(self, "Store 3", id="store-3")
-
-        self.factory_1 = Factory(self, "Factory 1", id="factory-1")
-        self.factory_2 = Factory(self, "Factory 2", id="factory-2")
-        self.factory_3 = Factory(self, "Factory 3", id="factory-3")
-
-        self.cutlass = Product(self, "Cutlass", id="cutlass")
-        self.parrot = Product(self, "Parrot", id="parrot")
-        self.pegleg = Product(self, "Pegleg", id="pegleg")
+        self._orders_by_id = dict()
 
         self.sizes = "small", "medium", "large"
         self.colors = "red", "green", "blue"
+
+        Store(self, "Store 1", id="store-1")
+        Store(self, "Store 2", id="store-2")
+        Store(self, "Store 3", id="store-3")
+
+        Factory(self, "Factory 1", id="factory-1")
+        Factory(self, "Factory 2", id="factory-2")
+        Factory(self, "Factory 3", id="factory-3")
+
+        Product(self, "Cutlass", id="cutlass")
+        Product(self, "Parrot", id="parrot")
+        Product(self, "Pegleg", id="pegleg")
 
     def get_store(self, store_id):
         with self._lock:
@@ -85,6 +86,27 @@ class Model:
 
         return results
 
+    def get_order(self, order_id):
+        with self._lock:
+            return self._orders_by_id.get(order_id)
+
+    def add_order(self, order):
+        _log.info(f"Adding {order}")
+
+        with self._lock:
+            self._orders_by_id[order.id] = order
+
+    def find_orders(self):
+        _log.info(f"Finding orders")
+
+        results = list()
+
+        with self._lock:
+            for order in self._orders_by_id.values():
+                results.append(order.data())
+
+        return results
+
 class Store:
     def __init__(self, model, name, id=None):
         self.model = model
@@ -96,6 +118,9 @@ class Store:
 
         with self.model._lock:
             self.model._stores_by_id[self.id] = self
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.id},{self.name})"
 
 class Factory:
     def __init__(self, model, name, id=None):
@@ -109,6 +134,9 @@ class Factory:
         with self.model._lock:
             self.model._factories_by_id[self.id] = self
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.id},{self.name})"
+
 class Product:
     def __init__(self, model, name, id=None):
         self.model = model
@@ -121,29 +149,32 @@ class Product:
         with self.model._lock:
             self.model._products_by_id[self.id] = self
 
-class ProductItem:
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.id},{self.name})"
+
+class Item:
     def __init__(self, model, product, size, color, id=None):
-        assert product is not None
-        assert size in ("small", "medium", "large")
-        assert color in ("red", "green", "blue")
+        assert product in model._products_by_id.values()
+        assert size in model.sizes
+        assert color in model.colors
 
         self.id = id
         self.model = model
         self.product = product
         self.size = size
         self.color = color
-        self.store = None
+        self.store = None # XXX Not here
 
         if self.id is None:
             self.id = _unique_id()
 
-        with self.model._lock:
-            self.model._items_by_id[self.id] = self
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.id},{self.product},{self.size},{self.color})"
 
     @staticmethod
     def load(model, data):
         product = model.get_product(data["product_id"])
-        return ProductItem(model, product, data["size"], data["color"], id=data.get("id"))
+        return Item(model, product, data["size"], data["color"], id=data["id"])
 
     def data(self):
         return {
@@ -151,11 +182,43 @@ class ProductItem:
             "product_id": self.product.id,
             "size": self.size,
             "color": self.color,
-            "store_id": (None if self.store is None else self.store.id),
+            "store_id": (None if self.store is None else self.store.id), # XXX
         }
 
+class Order:
+    def __init__(self, model, product, size, color, id=None):
+        assert product in model._products_by_id.values()
+        assert size in model.sizes
+        assert color in model.colors
+
+        self.id = id
+        self.model = model
+        self.product = product
+        self.size = size
+        self.color = color
+
+        self.id = id
+        self.model = model
+
+        if self.id is None:
+            self.id = _unique_id()
+
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.product.id},{self.size},{self.color})"
+        return f"{self.__class__.__name__}({self.id},{self.product},{self.size},{self.color})"
+
+    @staticmethod
+    def load(model, data):
+        product = model.get_product(data["product_id"])
+        return Order(model, product, data["size"], data["color"], id=data["id"])
+
+    def data(self):
+        return {
+            "id": self.id,
+            "product_id": self.product.id,
+            "size": self.size,
+            "color": self.color,
+            # "store_id": (None if self.store is None else self.store.id),
+        }
 
 def _unique_id():
     uuid_bytes = _uuid.uuid4().bytes
