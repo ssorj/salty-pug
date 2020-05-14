@@ -38,7 +38,7 @@ _log = logging.getLogger("client")
 
 class Client:
     def get_json(self, url, **params):
-        _log.info(f"Requesting {url}")
+        _log.info(f"Calling {url} (GET)")
 
         response = _requests.get(url)
 
@@ -48,10 +48,15 @@ class Client:
             _log.exception(e)
             raise
 
-        return response.json()
+        response_data = response.json()
+
+        _log.info(f"Response data: {response_data}")
+
+        return response_data
 
     def post_json(self, url, request_data):
-        _log.info(f"Requesting {url}")
+        _log.info(f"Calling {url} (POST)")
+        _log.info(f"Request data: {request_data}")
 
         response = _requests.post(url, json=request_data)
 
@@ -61,7 +66,11 @@ class Client:
             _log.exception(e)
             raise
 
-        return response.json()
+        response_data = response.json()
+
+        _log.info(f"Response data: {response_data}")
+
+        return response_data
 
     def check_errors(self, data):
         for response in data:

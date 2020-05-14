@@ -97,7 +97,7 @@ class Model:
             self._orders_by_id[order.id] = order
 
     def find_orders(self, product=None, size=None, color=None):
-        _log.info(f"Finding roders ({product}, {size}, {color})")
+        _log.info(f"Finding orders ({product}, {size}, {color})")
 
         results = list()
 
@@ -123,7 +123,7 @@ class Store:
             self.model._stores_by_id[self.id] = self
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.name})"
+        return f"{self.__class__.__name__}({self.id})"
 
 class Factory:
     def __init__(self, model, name, id=None):
@@ -138,7 +138,7 @@ class Factory:
             self.model._factories_by_id[self.id] = self
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.name})"
+        return f"{self.__class__.__name__}({self.id})"
 
 class Product:
     def __init__(self, model, name, id=None):
@@ -153,7 +153,7 @@ class Product:
             self.model._products_by_id[self.id] = self
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.name})"
+        return f"{self.__class__.__name__}({self.id})"
 
 class Item:
     def __init__(self, model, product, size, color, id=None):

@@ -53,7 +53,7 @@ def configure_logging():
 
     handler.setFormatter(formatter)
 
-    for module in "client", "console", "store", "factory":
+    for module in "client", "model":
         logger = logging.getLogger(module)
 
         logger.setLevel(logging.INFO)
@@ -79,4 +79,7 @@ def generate_data():
 
         order = Order(model, product, size, color, store=store)
 
-        client.order_item(order)
+        try:
+            client.order_item(order)
+        except:
+            _traceback.print_exc()
