@@ -79,23 +79,24 @@ class Client:
 
         return results
 
-    def make_item(self, item, store):
-        url = f"{_factory_any_url}/api/make-item"
+    # find_orders XXX
 
-        request_data = {
-            "item": item.data(),
-            "store_id": store.id,
+    def order_item(self, order):
+        url = f"{_factory_any_url}/api/order-item"
+
+        data = {
+            "order": order.data(),
         }
 
-        return self.post_json(url, request_data)
+        return self.post_json(url, data)
 
-    def stock_item(self, item, store):
+    def stock_item(self, store, item):
         host = os.environ.get("STORE_SERVICE_STORE_ID_OVERRIDE", store.id)
         port = int(os.environ.get("STORE_SERVICE_PORT", 8080))
         url = f"http://{host}:{port}/api/stock-item"
 
-        request_data = {
+        data = {
             "item": item.data(),
         }
 
-        return self.post_json(url, request_data)
+        return self.post_json(url, data)

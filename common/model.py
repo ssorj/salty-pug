@@ -182,34 +182,35 @@ class Item:
             "product_id": self.product.id,
             "size": self.size,
             "color": self.color,
-            "store_id": (None if self.store is None else self.store.id), # XXX
         }
 
 class Order:
-    def __init__(self, model, product, size, color, id=None):
+    def __init__(self, model, product, size, color, id=None, store=None):
         assert product in model._products_by_id.values()
         assert size in model.sizes
         assert color in model.colors
+
+        # XXX For now, require a store
+        assert store in model._stores_by_id.values()
 
         self.id = id
         self.model = model
         self.product = product
         self.size = size
         self.color = color
-
-        self.id = id
-        self.model = model
+        self.store = store
 
         if self.id is None:
             self.id = _unique_id()
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.id},{self.product},{self.size},{self.color})"
+        return f"{self.__class__.__name__}({self.id},{self.product},{self.size},{self.color},{self.store})"
 
     @staticmethod
     def load(model, data):
         product = model.get_product(data["product_id"])
-        return Order(model, product, data["size"], data["color"], id=data["id"])
+        store = model.get_store(data.get("store_id"))
+        return Order(model, product, data["size"], data["color"], id=data["id"], store=store)
 
     def data(self):
         return {
@@ -217,7 +218,7 @@ class Order:
             "product_id": self.product.id,
             "size": self.size,
             "color": self.color,
-            # "store_id": (None if self.store is None else self.store.id),
+            "store_id": (None if self.store is None else self.store.id),
         }
 
 def _unique_id():

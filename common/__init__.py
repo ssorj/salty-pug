@@ -77,6 +77,6 @@ def generate_data():
         size = random.choice(model.sizes)
         color = random.choice(model.colors)
 
-        item = Item(model, product, size, color)
+        order = Order(model, product, size, color, store=store)
 
-        client.make_item(item, store)
+        client.order_item(order)
