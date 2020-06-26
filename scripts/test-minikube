@@ -11,20 +11,19 @@ def main():
     test_kubeconfig = make_temp_file()
 
     with open("/tmp/minikube-tunnel-output", "w") as tunnel_output_file:
-        try:
-            with working_env(KUBECONFIG=test_kubeconfig):
+        with working_env(KUBECONFIG=test_kubeconfig):
+            try:
                 call(f"minikube -p {test_profile} start")
 
                 with start_process(f"minikube tunnel -p {test_profile}", output=tunnel_output_file):
                     run_test()
 
                 notice("Test result: PASSED")
-        except:
-            error("Test result: FAILED")
-            raise
-        finally:
-            call(f"minikube -p {test_profile} tunnel --cleanup")
-            call(f"minikube -p {test_profile} delete")
+            except:
+                error("Test result: FAILED")
+                raise
+            finally:
+                call(f"minikube -p {test_profile} delete")
 
 if __name__ == "__main__":
     try:
